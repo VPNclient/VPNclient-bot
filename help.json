@@ -1,0 +1,371 @@
+{
+  "name": "help.json",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        60,
+        -240
+      ],
+      "id": "028f5a09-6f21-47c5-9ddd-c788e3eb88de",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "182730cc-316c-4c53-8184-b1c033a93eb1",
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                    "rightValue": "help_vpn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_vpn"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        400,
+        -240
+      ],
+      "id": "e9d3c721-761c-4049-9532-e081146fcfd9",
+      "name": "Switch Help"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Добавить тексе",
+        "additionalFields": {}
+      },
+      "name": "Send help_vpn",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        680,
+        -320
+      ],
+      "id": "790ff88c-0218-493c-8daf-f20015022848",
+      "webhookId": "77becde3-8396-41e3-80ec-ca02206f0086",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Установка: скачайте приложение из маркета, вставьте конфигурацию и включите VPN.",
+        "additionalFields": {}
+      },
+      "id": "a9eda951-503c-4f2a-ad86-7627fd15c008",
+      "name": "Send help_install",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        -540
+      ],
+      "webhookId": "73e33b8e-deb7-42b5-b007-6cd2f03098f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Ссылка всегда доступна в разделе \"Мои устройства\" или по команде /devices.",
+        "additionalFields": {}
+      },
+      "id": "320385f5-6e4f-469d-9726-f630ed99a47f",
+      "name": "Send help_link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        -180
+      ],
+      "webhookId": "45d901a0-ac40-435f-a97d-829997a27151",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Попробуйте другой сервер. Скорость может зависеть от вашего провайдера или региона.",
+        "additionalFields": {}
+      },
+      "id": "b9b07682-3838-4b71-af73-3539d952a28e",
+      "name": "Send help_speed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        -300
+      ],
+      "webhookId": "b0d51d02-d877-4902-a679-4f42bac1260d",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Убедитесь, что устройство подключено к интернету и поддерживает Android TV.",
+        "additionalFields": {}
+      },
+      "id": "fb3e6579-2d1e-4611-bad1-7617b4874ac2",
+      "name": "Send help_tv",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        980,
+        -60
+      ],
+      "webhookId": "cf734601-dcf9-4247-b44c-0002852f28b8",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Вы можете заморозить аккаунт, если не планируете пользоваться сервисом временно.",
+        "additionalFields": {}
+      },
+      "id": "2b09f3e7-9864-47e7-9280-f873b29e2c8b",
+      "name": "Send help_freeze",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        700,
+        140
+      ],
+      "webhookId": "8bfdcf0e-694f-42a4-b6eb-ff5cfaa11a8a",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Если протокол не работает, используйте альтернативный: Reality, Shadowsocks или Trojan.",
+        "additionalFields": {}
+      },
+      "id": "bd211c03-8f9e-4749-bd50-f2eb4f24946f",
+      "name": "Send help_alt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        900,
+        120
+      ],
+      "webhookId": "be16b3e8-82a1-461e-968d-727d4ca64711",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Выберите тему, с которой нужна помощь:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "VPN не работает",
+                    "additionalFields": {
+                      "callback_data": "help_vpn"
+                    }
+                  },
+                  {
+                    "text": "Инструкция по установке",
+                    "additionalFields": {
+                      "callback_data": "help_install"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Не могу найти ссылку",
+                    "additionalFields": {
+                      "callback_data": "help_link"
+                    }
+                  },
+                  {
+                    "text": "Низкая скорость",
+                    "additionalFields": {
+                      "callback_data": "help_speed"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Телевизор (Android TV)",
+                    "additionalFields": {
+                      "callback_data": "help_tv"
+                    }
+                  },
+                  {
+                    "text": "Заморозка баланса",
+                    "additionalFields": {
+                      "callback_data": "help_freeze"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Альтернативный протокол",
+                    "additionalFields": {
+                      "callback_data": "help_alt"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "name": "Send response /help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        680,
+        -520
+      ],
+      "id": "1c0a1672-2b8e-40b6-b973-aba6e7606514",
+      "webhookId": "d7934871-5794-4151-a829-26200a3e2b84",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Switch Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Help": {
+      "main": [
+        [
+          {
+            "node": "Send response /help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send help_vpn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e75fa40f-1014-409f-afde-3740ab153107",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "DwOrelcFO2IVNgW1",
+  "tags": []
+}

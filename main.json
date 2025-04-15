@@ -1,0 +1,558 @@
+{
+  "name": "main.json",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowId": "start.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -40
+      ],
+      "id": "43b508fa-12cc-4d65-b2e4-d21869977a24",
+      "name": "Execute /start"
+    },
+    {
+      "parameters": {
+        "workflowId": "devices.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        120
+      ],
+      "id": "3c590681-2f3f-4c89-a2b4-59de36b2c53e",
+      "name": "Execute /devices"
+    },
+    {
+      "parameters": {
+        "workflowId": "invite.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "id": "a9ec25a5-8e8c-42e4-a647-27df527c24d8",
+      "name": "Execute /invite"
+    },
+    {
+      "parameters": {
+        "workflowId": "DwOrelcFO2IVNgW1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        460
+      ],
+      "id": "8df8600a-45bc-4778-90dd-b6b45f841b84",
+      "name": "Execute /help"
+    },
+    {
+      "parameters": {
+        "workflowId": "privacy.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        400,
+        660
+      ],
+      "id": "88527429-b144-4e35-b823-d13ab5fc54d7",
+      "name": "Execute /privacy"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                    "rightValue": "devices_add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "add_device"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                    "rightValue": "devices_delete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "delete_device"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "540858f6-18d8-41cc-9103-8d471c7b6fe0",
+                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                    "rightValue": "help_vpn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_vpn"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        100,
+        1180
+      ],
+      "id": "7ea1cf13-1435-4c76-9e69-7e6be33488d4",
+      "name": "Switch Callback"
+    },
+    {
+      "parameters": {
+        "workflowId": "Telegram Callback AddDevice",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        380,
+        1220
+      ],
+      "id": "40a0300a-140c-43de-8729-b1ce98c8d884",
+      "name": "Execute AddDevice"
+    },
+    {
+      "parameters": {
+        "workflowId": "Telegram Callback DeleteDevice",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        380,
+        1400
+      ],
+      "id": "463e738c-bef0-44aa-8f0e-07c360b7d652",
+      "name": "Execute DeleteDevice"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        160
+      ],
+      "id": "2d1ef5d7-9c3c-4e84-b08f-4836173ab228",
+      "name": "Telegram Trigger Messages",
+      "webhookId": "14d20b1e-4ecb-496f-935a-838cbb28cd29",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "test ok",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        940
+      ],
+      "id": "91e3d0b7-88ff-4dc6-b91c-3a730211ccee",
+      "name": "Telegram",
+      "webhookId": "78019176-14de-42a1-a736-031361d83bc9",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/devices",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/devices"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/invite",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/invite"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/privacy",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/privacy"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c32c6396-4239-4ba0-a6e1-e1097689794f",
+                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "rightValue": "/test",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/test"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "08ef8fa6-5eab-45b8-bbdc-b6d8f9dcbf70",
+                    "leftValue": "=true",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "others"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        120,
+        120
+      ],
+      "id": "b25b4880-66e8-4a25-ac1d-1752b1740b8e",
+      "name": "Switch Command"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "36a28a65-b8a3-4048-83a8-81f44e10a70b",
+      "name": "Extract message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        340,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: $json }];"
+      },
+      "id": "9f223774-8e9e-4c28-9c11-745f78f55323",
+      "name": "Show second $json",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        400,
+        940
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch Callback": {
+      "main": [
+        [
+          {
+            "node": "Execute AddDevice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute DeleteDevice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute /help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger Messages": {
+      "main": [
+        [
+          {
+            "node": "Switch Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Command": {
+      "main": [
+        [
+          {
+            "node": "Execute /start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute /devices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute /invite",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute /help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute /privacy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Show second $json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch Callback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Show second $json": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "531d04d6-d945-454b-bbaa-96df081260d6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "JrBL2echFfMR1hvA",
+  "tags": []
+}
