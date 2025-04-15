@@ -1,0 +1,139 @@
+{
+    "name": "start.json",
+    "nodes": [
+      {
+        "id": "1", 
+        "name": "Telegram Trigger (start)", 
+        "type": "n8n-nodes-base.telegramTrigger", 
+        "position": [0, 0],
+        "parameters": { "updates": ["message"] }
+      },
+      {
+        "id": "2",
+        "name": "Check User",
+        "type": "n8n-nodes-base.mySql",
+        "position": [300, 0],
+        "parameters": {
+          "query": "SELECT * FROM users WHERE telegram_id={{$json[\"message\"][\"from\"][\"id\"]}};"
+        }
+      },
+      {
+        "id": "3",
+        "name": "If New User?",
+        "type": "n8n-nodes-base.if",
+        "position": [500, 0],
+        "parameters": {
+          "conditions": {
+            "boolean": [{
+              "value1": "={{ Object.keys($json).length === 0 }}", 
+              "operation": "isTrue"
+            }]
+          }
+        }
+      },
+      {
+        "id": "4",
+        "name": "Insert User (no ref)",
+        "type": "n8n-nodes-base.mySql",
+        "position": [700, 100],
+        "parameters": {
+          "query": "INSERT INTO users (telegram_id, username, first_name, last_name) VALUES ({{$json[\"message\"][\"from\"][\"id\"]}}, '{{$json[\"message\"][\"from\"][\"username\"]}}', '{{$json[\"message\"][\"from\"][\"first_name\"]}}', '{{$json[\"message\"][\"from\"][\"last_name\"]}}');"
+        }
+      },
+      {
+        "id": "5",
+        "name": "Insert User (with ref)",
+        "type": "n8n-nodes-base.mySql",
+        "position": [700, -100],
+        "parameters": {
+          "query": "INSERT INTO users (telegram_id, username, first_name, last_name, referrer_id, balance) VALUES ({{$json[\"message\"][\"from\"][\"id\"]}}, '{{$json[\"message\"][\"from\"][\"username\"]}}', '{{$json[\"message\"][\"from\"][\"first_name\"]}}', '{{$json[\"message\"][\"from\"][\"last_name\"]}}', {{ $json[\"message\"][\"text\"].split(' ')[1] }}, 100);"
+        }
+      },
+      {
+        "id": "6",
+        "name": "Update Referrer Balance",
+        "type": "n8n-nodes-base.mySql",
+        "position": [900, -100],
+        "parameters": {
+          "query": "UPDATE users SET balance = balance + 50 WHERE id={{ $json[\"message\"][\"text\"].split(' ')[1] }};"
+        }
+      },
+      {
+        "id": "7",
+        "name": "Log Referral (referrer)",
+        "type": "n8n-nodes-base.mySql",
+        "position": [1100, -100],
+        "parameters": {
+          "query": "INSERT INTO transactions (user_id, amount, type, comment) VALUES ({{ $json[\"message\"][\"text\"].split(' ')[1] }}, 50, 'referral_bonus', 'Bonus for referral');"
+        }
+      },
+      {
+        "id": "8",
+        "name": "Log Referral (new user)",
+        "type": "n8n-nodes-base.mySql",
+        "position": [1300, -100],
+        "parameters": {
+          "query": "INSERT INTO transactions (user_id, amount, type, comment) VALUES ((SELECT id FROM users WHERE telegram_id={{$json[\"message\"][\"from\"][\"id\"]}}), 100, 'referral_bonus', 'Signup bonus');"
+        }
+      },
+      {
+        "id": "9",
+        "name": "Get User Data",
+        "type": "n8n-nodes-base.mySql",
+        "position": [900, 200],
+        "parameters": {
+          "query": "SELECT balance FROM users WHERE telegram_id={{ $json[\"message\"][\"from\"][\"id\"] }};"
+        }
+      },
+      {
+        "id": "10",
+        "name": "Count Devices",
+        "type": "n8n-nodes-base.mySql",
+        "position": [1100, 200],
+        "parameters": {
+          "query": "SELECT COUNT(*) AS deviceCount FROM devices WHERE user_id=(SELECT id FROM users WHERE telegram_id={{ $json[\"message\"][\"from\"][\"id\"] }}) AND status='active';"
+        }
+      },
+      {
+        "id": "11",
+        "name": "Compose Welcome",
+        "type": "n8n-nodes-base.function",
+        "position": [1300, 200],
+        "parameters": {
+          "functionCode": "const balance = $node[\"Get User Data\"].first().json.balance;\nconst deviceCount = $node[\"Count Devices\"].first().json.deviceCount;\nlet daysText = \"\";\nif (deviceCount > 0) {\n  const days = Math.floor(balance * 30 / (100 * deviceCount));\n  daysText = `(~${days} дней)`;\n}\nconst firstName = $json[\"message\"][\"from\"][\"first_name\"] || \"пользователь\";\nlet greet = $node[\"Check User\"].json ? \"Рады видеть вас снова\" : \"Добро пожаловать\";\nreturn [{ json: { text: `${greet}, ${firstName}!\\nВаш баланс ${balance}₽ ${daysText}, аккаунт активен. Тариф 100₽/мес за 1 устройство, активно ${deviceCount} устройств.\\nЕсли вы потеряли настройки, нажмите 'Мои устройства'. Пригласите друзей – получите бонус 50₽ на баланс за каждого!` } }];"
+        }
+      },
+      {
+        "id": "12",
+        "name": "Send Welcome",
+        "type": "n8n-nodes-base.telegram",
+        "position": [1500, 200],
+        "parameters": {
+          "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$node[\"Compose Welcome\"].json[\"text\"]}}"
+        },
+        "credentials": {
+          "telegramApi": { "id": "XXXX", "name": "Telegram account" }
+        }
+      }
+    ],
+    "connections": {
+      "1": { "main": [[ { "node": "2", "index": 0 } ]] },
+      "2": { "main": [[ { "node": "3", "index": 0 } ]] },
+      "3": {
+        "main": [
+          [ { "node": "5", "index": 0 } ], 
+          [ { "node": "4", "index": 0 } ]
+        ]
+      },
+      "5": { "main": [[ { "node": "6", "index": 0 } ]] },
+      "6": { "main": [[ { "node": "7", "index": 0 } ]] },
+      "7": { "main": [[ { "node": "8", "index": 0 } ]] },
+      "4": { "main": [[ { "node": "9", "index": 0 } ]] },
+      "8": { "main": [[ { "node": "9", "index": 0 } ]] },
+      "9": { "main": [[ { "node": "10", "index": 0 } ]] },
+      "10": { "main": [[ { "node": "11", "index": 0 } ]] },
+      "11": { "main": [[ { "node": "12", "index": 0 } ]] }
+    }
+  }
+  

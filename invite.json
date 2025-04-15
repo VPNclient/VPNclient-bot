@@ -1,0 +1,114 @@
+{
+  "name": "invite.json",
+  "nodes": [
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "c3a80826-afad-4c75-8646-d37fbbb6d23d",
+      "name": "GetUserId",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -300,
+        -240
+      ],
+      "typeVersion": 2.4
+    },
+    {
+      "parameters": {
+        "functionCode": "const id = $node[\"GetUserId\"].first().json.id; return [{ json: { link: `https://t.me/hitvpnbot?start=${id}` } }];"
+      },
+      "id": "8434c4c7-7aba-4b92-a2e2-1c18bad97882",
+      "name": "GenerateLink",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        -100,
+        -240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "={{'Ваша реферальная ссылка: ' + $node[\"GenerateLink\"].json[\"link\"] + '\\nПригласите друзей и получите 50₽ на баланс за каждого!'}}",
+        "additionalFields": {}
+      },
+      "id": "815bc596-9fbd-44f3-b083-f3b4c3a64d33",
+      "name": "SendInviteLink",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        100,
+        -240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "f803973a-f3f2-4478-84af-dd12330d5687",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -500,
+        -240
+      ],
+      "id": "9670bafa-4f2b-49d1-a6f6-171e2758ca9a",
+      "name": "When clicking ‘Test workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "GetUserId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetUserId": {
+      "main": [
+        [
+          {
+            "node": "GenerateLink",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GenerateLink": {
+      "main": [
+        [
+          {
+            "node": "SendInviteLink",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "27ea9208-3585-44fa-8be5-245132bf76e2",
+  "meta": {
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "cBrJaZBkZBpcakGo",
+  "tags": []
+}

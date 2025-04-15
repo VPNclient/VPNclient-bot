@@ -1,0 +1,523 @@
+{
+    "name": "devices.json",
+    "nodes": [
+      {
+        "parameters": {
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          }
+        },
+        "id": "d2e767a5-6d7f-493d-9217-10290f90a857",
+        "name": "GetDevices",
+        "type": "n8n-nodes-base.mySql",
+        "position": [
+          200,
+          0
+        ],
+        "typeVersion": 2.4,
+        "credentials": {
+          "mySql": {
+            "id": "x219LayYyFolDwme",
+            "name": "MySQL account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "functionCode": "const devices = items.map(item => item.json);\nlet text = '';\nconst inlineKeyboard = [];\nif (devices.length === 0) {\n  text = 'У вас нет активных устройств.\\nДобавьте устройство, чтобы начать пользоваться VPN.';\n} else {\n  text = `У вас активно ${devices.length} устройств:\\n`;\n  for (let dev of devices) {\n    const devId = dev.id;\n    const name = dev.device_name || 'Устройство ' + devId;\n    text += `- ${name} (ID: ${devId})\\n`;\n    inlineKeyboard.push([{ text: devId.toString(), callback_data: 'device_' + devId }]);\n  }\n}\n// Добавляем кнопки действий:\ninlineKeyboard.push([\n  { text: '➕ Добавить устройство', callback_data: 'devices_add' },\n  { text: '❌ Удалить устройство', callback_data: 'devices_delete' }\n]);\nreturn [{ json: { text: text, reply_markup: { inline_keyboard: inlineKeyboard } } }];"
+        },
+        "id": "876b3fd9-6d83-47cb-afb5-f937164514da",
+        "name": "PrepareDeviceList",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          400,
+          0
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$node[\"PrepareDeviceList\"].json[\"text\"]}}",
+          "additionalFields": {}
+        },
+        "id": "e4d35d8c-a8cd-4abe-bc54-2dd204d9ce27",
+        "name": "SendDeviceList",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          600,
+          0
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "3afefa93-b0c5-4b46-9bd4-1c8a89b2f133",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "⚠️ Внимание! Вы добавляете еще одно устройство. Стоимость 100₽/мес за каждое дополнительное устройство.\\nВыберите тип устройства:",
+          "additionalFields": {}
+        },
+        "id": "4423f7b6-7d3a-47ae-a727-cc3f95361934",
+        "name": "AskDeviceType",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          140,
+          280
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "Выберите тип операционной системы компьютера:",
+          "additionalFields": {}
+        },
+        "id": "32e47dfe-23c4-420c-9c53-7ff63133272b",
+        "name": "AskComputerOS",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          360,
+          280
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "21b8082a-2e49-43b9-9ea4-8d63f4dd3372",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          }
+        },
+        "id": "6f676779-88b7-4c71-9888-79dd5a148abd",
+        "name": "InsertDevice",
+        "type": "n8n-nodes-base.mySql",
+        "position": [
+          560,
+          280
+        ],
+        "typeVersion": 2.4,
+        "credentials": {
+          "mySql": {
+            "id": "x219LayYyFolDwme",
+            "name": "MySQL account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "functionCode": "const data = $json[\"callback_query\"][\"data\"] || '';\nlet deviceType = '';\nif (data.includes('ios')) deviceType = 'iOS';\nif (data.includes('android') && !data.includes('tv')) deviceType = 'Android';\nif (data.includes('tv')) deviceType = 'Android TV';\nif (data.includes('mac')) deviceType = 'Mac';\nif (data.includes('windows')) deviceType = 'Windows';\n// Генерируем ссылку конфигурации (пример):\nconst token = Math.random().toString(36).slice(-6);\nconst configLink = `hitvpn://config-${token}`;\n// Шаблоны инструкций для каждого типа:\nlet instructions = '';\nswitch(deviceType) {\n  case 'iOS':\n    instructions = '1. Установите приложение HitVPN из AppStore\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение HitVPN и вставьте скопированную ссылку\\n4. Включите VPN.';\n    break;\n  case 'Android':\n    instructions = '1. Установите приложение HitVPN из Google Play\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Android TV':\n    instructions = '1. Установите приложение HitVPN на Android TV\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Mac':\n    instructions = '1. Скачайте приложение HitVPN для macOS\\n2. Скопируйте ссылку настройки\\n3. Запустите приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Windows':\n    instructions = '1. Скачайте приложение HitVPN для Windows\\n2. Скопируйте ссылку настройки\\n3. Запустите приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n}\nreturn [{ json: { text: `Ваше устройство (${deviceType}) добавлено!\\nСсылка для настройки: ${configLink}\\n\\nИнструкция для ${deviceType}:\\n${instructions}` } }];"
+        },
+        "id": "28d7709c-a743-4c08-b123-242011672ce7",
+        "name": "PrepareConfigMessage",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          780,
+          280
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$node[\"PrepareConfigMessage\"].json[\"text\"]}}",
+          "additionalFields": {}
+        },
+        "id": "36cb0ce9-cf59-46f6-ab96-1ec78c388928",
+        "name": "SendConfig",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          980,
+          280
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "bb844955-a59e-448b-aeaf-6a535a9a79ee",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -340,
+          300
+        ],
+        "id": "9466767b-4240-4154-8021-0fa7dc289a41",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "182730cc-316c-4c53-8184-b1c033a93eb1",
+                      "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                      "rightValue": "/devices",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "/devices"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                      "rightValue": "devices_add",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "devices_add"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "53087c37-6744-4063-a7b2-e655ba33b76c",
+                      "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
+                      "rightValue": "devices_remove",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "devices_remove"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -140,
+          300
+        ],
+        "id": "8bff0997-3735-4e03-b62b-c4f9add678c6",
+        "name": "Switch Help"
+      },
+      {
+        "parameters": {
+          "functionCode": "const devices = items.map(i=>i.json);\nlet text = '';\nconst inlineKeyboard = [];\nif (devices.length === 0) {\n  text = 'У вас нет активных устройств для удаления.';\n} else {\n  text = 'Выберите устройство для удаления:\\n⚠️ ВНИМАНИЕ: перед удалением выключите VPN!\\n';\n  for (let dev of devices) {\n    const id = dev.id; const name = dev.device_name || `Устройство ${id}`;\n    text += `- ${name} (ID: ${id})\\n`;\n    inlineKeyboard.push([{ text: `Удалить ${id}`, callback_data: `delete_${id}` }]);\n  }\n}\nreturn [{ json: { text, reply_markup: { inline_keyboard: inlineKeyboard } } }];"
+        },
+        "id": "1282c93f-d98a-429e-a487-d0b7bedc1994",
+        "name": "PrepareDeleteList",
+        "type": "n8n-nodes-base.function",
+        "position": [
+          340,
+          560
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$node[\"PrepareDeleteList\"].json[\"text\"]}}",
+          "additionalFields": {}
+        },
+        "id": "9df30259-af5c-46dd-9d64-95dcf166948d",
+        "name": "SendDeleteList",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          540,
+          560
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "a9e815f8-9c09-4787-b6c2-a148bf4f3cac",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          }
+        },
+        "id": "66c57747-2e34-4854-be09-799bd7171f99",
+        "name": "DeleteDevice",
+        "type": "n8n-nodes-base.mySql",
+        "position": [
+          760,
+          560
+        ],
+        "typeVersion": 2.4
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "Устройство удалено. Абонентская плата за него больше не начисляется.",
+          "additionalFields": {}
+        },
+        "id": "203fe94a-ab0b-47ee-9d3c-728034850dc8",
+        "name": "SendDeleteConfirm",
+        "type": "n8n-nodes-base.telegram",
+        "position": [
+          960,
+          560
+        ],
+        "typeVersion": 1.2,
+        "webhookId": "83c83511-86cd-4ffc-bb08-1c0d7889dbf5",
+        "credentials": {
+          "telegramApi": {
+            "id": "9hfs9gxsjeru7ML3",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          }
+        },
+        "id": "82bc5c81-758b-4d65-b930-cfb6a2700a37",
+        "name": "GetDevices1",
+        "type": "n8n-nodes-base.mySql",
+        "position": [
+          160,
+          560
+        ],
+        "typeVersion": 2.4
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "PrepareConfigMessage": {
+        "main": [
+          [
+            {
+              "node": "SendConfig",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Switch Help",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch Help": {
+        "main": [
+          [
+            {
+              "node": "GetDevices",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "AskDeviceType",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "GetDevices1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GetDevices": {
+        "main": [
+          [
+            {
+              "node": "PrepareDeviceList",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PrepareDeviceList": {
+        "main": [
+          [
+            {
+              "node": "SendDeviceList",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AskDeviceType": {
+        "main": [
+          [
+            {
+              "node": "AskComputerOS",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AskComputerOS": {
+        "main": [
+          [
+            {
+              "node": "InsertDevice",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "InsertDevice": {
+        "main": [
+          [
+            {
+              "node": "PrepareConfigMessage",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GetDevices1": {
+        "main": [
+          [
+            {
+              "node": "PrepareDeleteList",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "PrepareDeleteList": {
+        "main": [
+          [
+            {
+              "node": "SendDeleteList",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "SendDeleteList": {
+        "main": [
+          [
+            {
+              "node": "DeleteDevice",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "SendDeleteConfirm": {
+        "main": [
+          []
+        ]
+      },
+      "DeleteDevice": {
+        "main": [
+          [
+            {
+              "node": "SendDeleteConfirm",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "22e22611-0278-4762-bf45-e913563db400",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+    },
+    "id": "dinTFsFtKgJKMNH9",
+    "tags": []
+  }
+  
