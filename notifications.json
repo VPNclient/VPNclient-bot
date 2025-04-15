@@ -1,0 +1,85 @@
+{
+  "name": "notifications.json",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "4811abe8-aaa4-4199-bcaa-eeb2447343ca",
+      "name": "Cron (09:00 daily)",
+      "type": "n8n-nodes-base.cron",
+      "position": [
+        -100,
+        -80
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "id": "9391bcac-b247-4892-b703-0899bdd0a957",
+      "name": "FindExpiring",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        100,
+        -80
+      ],
+      "typeVersion": 2.4
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"telegram_id\"]}}",
+        "text": "Уважаемый пользователь, ваша подписка VPN истекает через {{$json[\"days_left\"]}} дн. Продлите ее вовремя, чтобы пользование сервисом не прерывалось.",
+        "additionalFields": {}
+      },
+      "id": "14c99533-4d27-4271-8bd5-6295cf29afe6",
+      "name": "NotifyExpiring",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        300,
+        -80
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "d0fbb203-23a1-4517-9d25-cc5f57c7f2dd"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Cron (09:00 daily)": {
+      "main": [
+        [
+          {
+            "node": "FindExpiring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FindExpiring": {
+      "main": [
+        [
+          {
+            "node": "NotifyExpiring",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cd4eba2a-310a-47db-bf77-abff962113d7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "vkipzxvIB9b8ipQ7",
+  "tags": []
+}

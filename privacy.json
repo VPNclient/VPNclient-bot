@@ -1,0 +1,63 @@
+{
+  "name": "privacy.json",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Мы используем только ваш Telegram ID для предоставления услуги VPN. Мы не собираем никаких личных данных. Данные о ваших устройствах хранятся безопасно и удаляются при прекращении обслуживания. Политика: никакие персональные сведения (имя, телефон и т.п.) не требуются и не сохраняются.",
+        "additionalFields": {}
+      },
+      "id": "ea584550-5e97-4f98-ab2e-09450459fbb5",
+      "name": "SendPrivacyPolicy",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        660,
+        -20
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "0e719cb2-eaff-4358-9785-33cb4ba9be68",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -20
+      ],
+      "id": "7de6893e-63fd-4962-bb46-e72472c1da21",
+      "name": "When clicking ‘Test workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "SendPrivacyPolicy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e4548142-a125-4b99-91e5-83c422e30ab7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "C8DvVNJJfaCR7YSp",
+  "tags": []
+}

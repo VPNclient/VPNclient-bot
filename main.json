@@ -3,7 +3,7 @@
   "nodes": [
     {
       "parameters": {
-        "workflowId": "start.json",
+        "workflowId": "w3lUqmSM8mC6WKJd",
         "options": {}
       },
       "type": "n8n-nodes-base.executeWorkflow",
@@ -13,7 +13,8 @@
         -40
       ],
       "id": "43b508fa-12cc-4d65-b2e4-d21869977a24",
-      "name": "Execute /start"
+      "name": "Execute /start",
+      "notes": "sub workflow start.json"
     },
     {
       "parameters": {
@@ -31,7 +32,7 @@
     },
     {
       "parameters": {
-        "workflowId": "invite.json",
+        "workflowId": "cBrJaZBkZBpcakGo",
         "options": {}
       },
       "type": "n8n-nodes-base.executeWorkflow",
@@ -41,7 +42,8 @@
         300
       ],
       "id": "a9ec25a5-8e8c-42e4-a647-27df527c24d8",
-      "name": "Execute /invite"
+      "name": "Execute /invite",
+      "notes": "sub workflow invite.json"
     },
     {
       "parameters": {
@@ -55,12 +57,15 @@
         460
       ],
       "id": "8df8600a-45bc-4778-90dd-b6b45f841b84",
-      "name": "Execute /help"
+      "name": "Execute /help",
+      "notes": "sub workflow help.json"
     },
     {
       "parameters": {
-        "workflowId": "privacy.json",
-        "options": {}
+        "workflowId": "C8DvVNJJfaCR7YSp",
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1,
@@ -69,7 +74,8 @@
         660
       ],
       "id": "88527429-b144-4e35-b823-d13ab5fc54d7",
-      "name": "Execute /privacy"
+      "name": "Execute /privacy",
+      "notes": "sub workflow privacy.json"
     },
     {
       "parameters": {
@@ -86,17 +92,17 @@
                 "conditions": [
                   {
                     "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
-                    "rightValue": "devices_add",
+                    "rightValue": "devices",
                     "operator": {
                       "type": "string",
-                      "operation": "equals"
+                      "operation": "startsWith"
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "add_device"
+              "outputKey": "devices"
             },
             {
               "conditions": {
@@ -109,42 +115,17 @@
                 "conditions": [
                   {
                     "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
-                    "rightValue": "devices_delete",
+                    "rightValue": "help",
                     "operator": {
                       "type": "string",
-                      "operation": "equals"
+                      "operation": "startsWith"
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "delete_device"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "540858f6-18d8-41cc-9103-8d471c7b6fe0",
-                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
-                    "rightValue": "help_vpn",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "help_vpn"
+              "outputKey": "help"
             }
           ]
         },
@@ -158,34 +139,6 @@
       ],
       "id": "7ea1cf13-1435-4c76-9e69-7e6be33488d4",
       "name": "Switch Callback"
-    },
-    {
-      "parameters": {
-        "workflowId": "Telegram Callback AddDevice",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        380,
-        1220
-      ],
-      "id": "40a0300a-140c-43de-8729-b1ce98c8d884",
-      "name": "Execute AddDevice"
-    },
-    {
-      "parameters": {
-        "workflowId": "Telegram Callback DeleteDevice",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        380,
-        1400
-      ],
-      "id": "463e738c-bef0-44aa-8f0e-07c360b7d652",
-      "name": "Execute DeleteDevice"
     },
     {
       "parameters": {
@@ -447,14 +400,7 @@
       "main": [
         [
           {
-            "node": "Execute AddDevice",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute DeleteDevice",
+            "node": "Execute /devices",
             "type": "main",
             "index": 0
           }
@@ -548,7 +494,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "531d04d6-d945-454b-bbaa-96df081260d6",
+  "versionId": "2a92fef6-fc15-4132-af96-5aa20758ecb2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
