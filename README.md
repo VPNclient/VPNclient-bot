@@ -24,7 +24,7 @@ CREATE TABLE users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     activated_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (referrer_id) REFERENCES users(telegram_id)
+    FOREIGN KEY (referrer_id) REFERENCES users(id)
 );
 
 -- Таблица устройств
