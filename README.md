@@ -14,11 +14,13 @@ CREATE TABLE users (
     username VARCHAR(255),
     first_name VARCHAR(255),
     last_name VARCHAR(255),
+    language_code VARCHAR(10), -- язык Telegram-пользователя
+    is_premium BOOLEAN DEFAULT FALSE, -- премиум-аккаунт Telegram
     referrer_id INT,
     balance DECIMAL(10, 2) DEFAULT 0,
     tarif DECIMAL(10, 2) DEFAULT 0,
     activated BOOLEAN DEFAULT FALSE,
-    utm VARCHAR(255),
+    utm_source VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     activated_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
