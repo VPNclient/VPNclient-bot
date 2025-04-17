@@ -8,15 +8,15 @@
 
 ```mysql
 -- Таблица пользователей
+DROP TABLE users;
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    telegram_id BIGINT NOT NULL UNIQUE,
+    id BIGINT PRIMARY KEY, -- telegram_id
     username VARCHAR(255),
     first_name VARCHAR(255),
     last_name VARCHAR(255),
-    language_code VARCHAR(10), 
-    is_premium BOOLEAN DEFAULT FALSE, 
-    referrer_id INT,
+    language_code VARCHAR(10),
+    is_premium BOOLEAN DEFAULT FALSE,
+    referrer_id BIGINT, -- тоже ссылается на telegram_id
     balance DECIMAL(10, 2) DEFAULT 0,
     tarif DECIMAL(10, 2) DEFAULT 0,
     activated BOOLEAN DEFAULT FALSE,
@@ -24,7 +24,7 @@ CREATE TABLE users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     activated_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (referrer_id) REFERENCES users(id)
+    FOREIGN KEY (referrer_id) REFERENCES users(telegram_id)
 );
 
 -- Таблица устройств
