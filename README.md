@@ -16,7 +16,11 @@ CREATE TABLE users (
     last_name VARCHAR(255),
     referrer_id INT,
     balance DECIMAL(10, 2) DEFAULT 0,
+    tarif DECIMAL(10, 2) DEFAULT 0,
+    activated BOOLEAN DEFAULT FALSE,
+    utm_source VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    activated_at DATETIME DEFAULT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (referrer_id) REFERENCES users(id)
 );
