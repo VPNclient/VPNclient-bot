@@ -30,7 +30,7 @@ CREATE TABLE users (
 -- Таблица устройств
 CREATE TABLE devices (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id BIGINT NOT NULL,
     device_name VARCHAR(255),
     marzban_id VARCHAR(255),
     config_url TEXT,
