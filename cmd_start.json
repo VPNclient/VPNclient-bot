@@ -1,0 +1,1146 @@
+{
+  "name": "cmd_start",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "dedc1124-7bb6-48a9-b590-8ba8ad91076a",
+      "name": "Insert User (no ref)",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2260,
+        760
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "8dc2e785-32de-4dfd-afba-18ae30eaa07a",
+      "name": "Update Referrer Balance",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2020,
+        500
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "c1be1dbd-db6a-416f-b66b-1555a2ef7d6f",
+      "name": "Log Referral (referrer)",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2040,
+        720
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "62de23fa-f8f4-4e7c-9fe4-10cdacde9619",
+      "name": "Log Referral (new user)",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2320,
+        600
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "e6dd43fa-0f39-41e9-81be-121f606cb4ef",
+      "name": "Get User Data",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2140,
+        -60
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1;",
+        "options": {}
+      },
+      "id": "197b1711-1a42-400c-bb21-0b31c2a962e2",
+      "name": "Count Devices",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2140,
+        200
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "🎉 Ваш друг принял приглашение, вам добавлено *50₽* на баланс!",
+        "additionalFields": {}
+      },
+      "id": "4dc88edf-34eb-42ec-8c41-efd65d02a6e6",
+      "name": "Send Friend Notification",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2140,
+        -240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dfc07b6-7d1f-4c30-857c-741439a5bf9b",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "start_activate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start_activate"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.telegram.message.text}}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d67b6285-4a47-40b1-8134-e4f77d104111",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1120,
+        140
+      ],
+      "id": "7faa4dd8-3eec-43f4-986d-7f9214d1e76e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        140
+      ],
+      "id": "db4fbcb3-7bb6-4982-98d2-9307ab0f991a",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE users SET\n  balance=$2,\n  tarif=$3,\n  activated=TRUE,\n  activated_at=NOW()\nWHERE id=$1 AND activated=FALSE;\n\n  \nSELECT * FROM users WHERE id=$1 LIMIT 1;\n\nSELECT $1;",
+        "options": {
+          "queryReplacement": "={{ $json.telegram.user_id }},\n{{ $json.config.tarif.balance_have_referer }},\n{{ $json.config.tarif.pay_month }}"
+        }
+      },
+      "id": "9028652e-4ed5-466a-bf91-bfc20a00cd35",
+      "name": "UserActivate",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -40,
+        -40
+      ],
+      "typeVersion": 2.4,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d761e31b-0c72-4417-b80d-78007bfd103e",
+      "name": "Send Activated",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        360,
+        -40
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": "dinTFsFtKgJKMNH9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        80
+      ],
+      "id": "2bfdf21e-6e32-492d-ad64-ffaf92d0dbf5",
+      "name": "Execute cmd_devices.json",
+      "notes": "Execute cmd_devices.json"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `**Внимание, ваш аккаунт уже активирован**\nНажимать кнопку активации повторно не нужно`;\n\nconst json=$json;\n// const json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -700
+      ],
+      "id": "bf288d3e-3481-4a5a-b785-30fb8ee6e49c",
+      "name": "AlreadyActivated"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🏠 Главное меню",
+                    "additionalFields": {
+                      "callback_data": "start"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "de422a06-1a4b-4b8f-90d5-8503a85bbfa0",
+      "name": "Send AlreadyActivated",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        160,
+        -700
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "0e719cb2-eaff-4358-9785-33cb4ba9be68",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dfc07b6-7d1f-4c30-857c-741439a5bf9b",
+                    "leftValue": "={{$json.user.activated}}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Activated"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.referrer.id}}",
+                    "rightValue": 10000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "6ac5ac7c-91e6-4fcd-864e-cf58a336ea74"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HaveRef"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d67b6285-4a47-40b1-8134-e4f77d104111",
+                    "leftValue": 0,
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "NoRef"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -500,
+        560
+      ],
+      "id": "acf41b47-8351-40a6-996d-388ee1f11b2f",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🚀 Подключить VPN 🚀",
+                    "additionalFields": {
+                      "callback_data": "start_activate"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "06f4e8c2-d632-4158-8fcc-f1fa7fdebd3b",
+      "name": "Send Activate",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        200,
+        720
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const firstName = $json.telegram.message.from.first_name || '';\nconst lastName = $json.telegram.message.from.last_name || '';\n\nconst fullName = `${firstName} ${lastName}`.trim();\n\nconst referrerFirstName = $json.referrer.first_name || '';\nconst referrerLastName = $json.referrer.last_name || '';\n\nconst referrerFullName = `${referrerFirstName} ${referrerLastName}`.trim();\n\n\n\n\nconst text = `Привет, ${fullName}!\n\nВас пригласил сюда ${referrerFullName}, поэтому вы можете бесплатно подключить VPN и получить 100₽ на балансе!\n\n💰 самая низкая цена на рынке!\n🚀 высокая скорость\n💃🏿 доступ ко всем сайтам\n💳 оплата картами РФ 🇷🇺 и СБП\n\nСтоимость 100₽/мес за 1 устройство, до 5 устройств.\n\n👫 Пригласите друзей в наш сервис и получите 50₽ на баланс за каждого друга. Ваши друзья получат 100₽ на баланс!\n\n⬇️ ⬇️  Жмите кнопку!  ⬇️ ⬇️`;\n\n\nconst json=$json;\n// const json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        620
+      ],
+      "id": "cbf7203b-322f-4c30-8d41-adb274024b4e",
+      "name": "ActivateHaveRef"
+    },
+    {
+      "parameters": {
+        "jsCode": "const firstName = $json.telegram.from.first_name || '';\nconst lastName = $json.telegram.from.last_name || '';\nconst fullName = `${firstName} ${lastName}`.trim();\n\n\nconst balance_no_referer=$json.config.tarif.balance_no_referer;\nconst balance_have_referer=$json.config.tarif.balance_have_referer;\nconst balance_to_referer=$json.config.tarif.balance_to_referer;\nconst pay_month=$json.config.tarif.pay_month;\n\n\nconst text = `Привет, ${fullName}!\n\nБесплатно подключите VPN и получите ${balance_no_referer}₽ на балансе!\n\n💰 самая низкая цена на рынке!\n🚀 высокая скорость\n💃🏿 доступ ко всем сайтам\n💳 оплата картами РФ 🇷🇺 и СБП\n\nСтоимость ${pay_month}₽/мес за 1 устройство, до 5 устройств.\n\n👫 Пригласите друзей в наш сервис и получите ${balance_to_referer}₽ на баланс за каждого друга. Ваши друзья получат ${balance_have_referer}₽ на баланс!\n\n⬇️ ⬇️  Жмите кнопку!  ⬇️ ⬇️`;\n\nconst json=$json;\n// const json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        840
+      ],
+      "id": "72bfab57-7615-43d1-88bf-586b6082a387",
+      "name": "ActivateNoRef"
+    },
+    {
+      "parameters": {
+        "jsCode": "const firstName = $json.telegram.from.first_name || '';\nconst lastName = $json.telegram.from.last_name || '';\nconst fullName = `${firstName} ${lastName}`.trim();\n\n\n//const balance_no_referer=$json.config.tarif.balance_no_referer;\nconst balance_have_referer=$json.config.tarif.balance_have_referer;\nconst balance_to_referer=$json.config.tarif.balance_to_referer;\n//const pay_month=$json.config.tarif.pay_month;\n\nconst bot_channel = $json.config.bot.bot_channel;\nconst bot_channel_markdown = bot_channel.replaceAll('_', '\\\\_');\n\nconst tarif=$json.user.tarif;\nconst balance=$json.user.balance;\n\n\nconst days=Math.floor(30*$json.user.balance/$json.user.tarif);\n\n\n\nconst text = `Рады видеть вас снова, ${fullName}!\n\nВаш баланс ${balance}₽ (~${days} дней), аккаунт активен\nТариф ${tarif}₽/мес за 1 устройство, активно 1 устройство.\n\nЕсли вы потеряли настройки - вы можете повторно их скачать, нажав на кнопку \"Мои устройства\".\n\n👭 Пригласите друзей в наш сервис и получите ${balance_to_referer}₽ на баланс за каждого друга. Ваши друзья получат ${balance_have_referer}₽ на баланс!\n\n📌 Обязательно (!!) [подпишитесь на наш канал](https://t.me/${bot_channel}) @${bot_channel_markdown}`;\n\n//\n\nconst json=$json;\n// const json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        420
+      ],
+      "id": "4137cfd0-bb6d-41b0-ba75-0eea745fb75d",
+      "name": "Welcome"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3dfc07b6-7d1f-4c30-857c-741439a5bf9b",
+                    "leftValue": "={{$json.user.activated}}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Activated"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -520,
+        -400
+      ],
+      "id": "fea2166a-e7a6-4c01-a52d-8cf6972ff75f",
+      "name": "Switch2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📱💻 Мои устройства",
+                    "additionalFields": {
+                      "callback_data": "devices"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "👭 Пригласить",
+                    "additionalFields": {
+                      "callback_data": "invite"
+                    }
+                  },
+                  {
+                    "text": "📖 Помощь",
+                    "additionalFields": {
+                      "callback_data": "help"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "03293669-ffab-46c0-b9ae-3afe0ff73fac",
+      "name": "Send Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        200,
+        420
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `🎉 Поздравляем, вы активировали аккаунт, 100₽ у вас на балансе!\n\nТеперь давайте настроим ваш VPN!`;\n\n\n// const json=$json;\nconst json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -40
+      ],
+      "id": "5df50d3e-6da2-4183-8799-b0ae903da77b",
+      "name": "Activated"
+    },
+    {
+      "parameters": {
+        "jsCode": "const json=$node[\"Start\"].json;\n\nreturn [{\n  json:{\n    first_start:true,\n    ...json\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -40
+      ],
+      "id": "e4f4aa18-e90a-4dc5-ac62-0e3d46c5105c",
+      "name": "Params"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE users SET\n  balance=balance+$2\nWHERE id=$1;",
+        "options": {
+          "queryReplacement": "={{$json.referrer.id}}, {{$json.config.tarif.balance_to_referer}}"
+        }
+      },
+      "id": "183984c7-71fa-4860-af0b-72aef28dde71",
+      "name": "SQL ReferrerAddBalance",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -40,
+        160
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `🎉 Ваш друг принял приглашение, вам добавлено *50₽* на баланс!`;\n\n\n// const json=$json;\nconst json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        160
+      ],
+      "id": "071c3177-b3b6-4b85-9275-53dde889947c",
+      "name": "AcceptedRefferal"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.referrer.id}}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "20c0ce6b-a883-4cb8-afc9-060b20b6795e",
+      "name": "Send AcceptedReferral",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        360,
+        160
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.referrer.id}}",
+                    "rightValue": 10000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "e291151a-f1f4-465e-a70c-05a5c3dd2be0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HaveReferrer"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        760,
+        -40
+      ],
+      "id": "05d80587-2f4c-4456-b661-30b8dd3e1c8a",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const json=$node[\"Start\"].json;\n\nreturn [{\n  json:{\n    first_start:true,\n    ...json\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        160
+      ],
+      "id": "433cd00f-151b-4a35-beb7-64e1ab994011",
+      "name": "Params1"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "referrer": {
+            "id": 6938197279,
+            "username": "vpnclient_support",
+            "first_name": "VPN Client",
+            "last_name": "Support",
+            "language_code": "en",
+            "is_premium": 0,
+            "referrer_id": null,
+            "balance": "150.00",
+            "tarif": "100.00",
+            "activated": 1,
+            "utm": "238560779",
+            "created_at": "2025-04-23 10:27:49",
+            "activated_at": "2025-04-23 10:35:10",
+            "updated_at": "2025-04-23 10:39:29"
+          },
+          "user": {
+            "id": 238560779,
+            "username": "AntonDodonov",
+            "first_name": "Anton Dodonov",
+            "last_name": "",
+            "language_code": "en",
+            "is_premium": 1,
+            "referrer_id": 6938197279,
+            "balance": "100.00",
+            "tarif": "100.00",
+            "activated": 1,
+            "utm": "6938197279",
+            "created_at": "2025-04-23 10:39:25",
+            "activated_at": "2025-04-23 10:39:30",
+            "updated_at": "2025-04-23 10:50:29"
+          },
+          "args": {
+            "referrer_id": 0,
+            "utm": ""
+          },
+          "config": {
+            "bot": {
+              "bot_name": "VPN Client",
+              "bot_username": "VPNclientBot",
+              "bot_group": "VPNclient_chat",
+              "bot_channel": "VPNclient_news",
+              "bot_support": "VPNclient_support"
+            },
+            "tarif": {
+              "balance_no_referer": 100,
+              "balance_have_referer": 100,
+              "balance_to_referer": 50,
+              "pay_month": 100
+            }
+          },
+          "telegram": {
+            "update_id": 191616980,
+            "message": {
+              "message_id": 650,
+              "from": {
+                "id": 238560779,
+                "is_bot": false,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "language_code": "en",
+                "is_premium": true
+              },
+              "chat": {
+                "id": 238560779,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "type": "private"
+              },
+              "date": 1745405428,
+              "text": "/start",
+              "entities": [
+                {
+                  "offset": 0,
+                  "length": 6,
+                  "type": "bot_command"
+                }
+              ]
+            },
+            "from": {
+              "id": 238560779,
+              "is_bot": false,
+              "first_name": "Anton Dodonov",
+              "username": "AntonDodonov",
+              "language_code": "en",
+              "is_premium": true
+            },
+            "user_id": 238560779,
+            "chat_id": 238560779
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Log Referral (new user)": {
+      "main": [
+        []
+      ]
+    },
+    "Send Friend Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UserActivate": {
+      "main": [
+        [
+          {
+            "node": "Activated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Activated": {
+      "main": [
+        [
+          {
+            "node": "Params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AlreadyActivated": {
+      "main": [
+        [
+          {
+            "node": "Send AlreadyActivated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ActivateHaveRef",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "ActivateNoRef",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Activate": {
+      "main": [
+        []
+      ]
+    },
+    "ActivateHaveRef": {
+      "main": [
+        [
+          {
+            "node": "Send Activate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ActivateNoRef": {
+      "main": [
+        [
+          {
+            "node": "Send Activate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "AlreadyActivated",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "UserActivate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Welcome": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activated": {
+      "main": [
+        [
+          {
+            "node": "Send Activated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Params": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL ReferrerAddBalance": {
+      "main": [
+        [
+          {
+            "node": "AcceptedRefferal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AcceptedRefferal": {
+      "main": [
+        [
+          {
+            "node": "Send AcceptedReferral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send AcceptedReferral": {
+      "main": [
+        [
+          {
+            "node": "Params1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "SQL ReferrerAddBalance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Execute cmd_devices.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Params1": {
+      "main": [
+        [
+          {
+            "node": "Execute cmd_devices.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "81fce9a0-df36-4f80-8136-f5a163e10624",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "w3lUqmSM8mC6WKJd",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
+}

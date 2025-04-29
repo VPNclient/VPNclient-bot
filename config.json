@@ -1,0 +1,53 @@
+{
+  "name": "config",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "let config = \n{\n  bot:{\n    \"bot_name\":\"VPN Client\",\n    \"bot_username\":\"VPNclientBot\",\n    \"bot_group\":\"VPNclient_chat\",\n    \"bot_channel\":\"VPNclient_news\",\n    \"bot_support\":\"VPNclient_support\"\n  },\n  tarif:{\n    \"balance_no_referer\":100,\n    \"balance_have_referer\":100,\n    \"balance_to_referer\":50,\n    \"pay_month\":100\n  }  \n  \n};\n\nreturn [{\n  json: {\n    config,\n    ...$json\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "c3cbb28a-8cba-476a-9d79-81f6acf60a42",
+      "name": "Config"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d2056966-c6ab-46f1-8308-40dbf8399cdd",
+      "name": "Start"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "99e15fc9-b68d-4204-9492-63ab47d9796f",
+  "meta": {
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "sJgafwuqjZcpLKvO",
+  "tags": []
+}

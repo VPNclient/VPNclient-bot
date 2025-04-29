@@ -1,0 +1,56 @@
+{
+  "name": "payment",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot<ТОКЕН>/sendInvoice",
+        "options": {}
+      },
+      "id": "175490f5-9a8e-4726-bccb-01ff1870644d",
+      "name": "SendInvoice",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        620,
+        -40
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        420,
+        -40
+      ],
+      "id": "67136835-a8ca-4362-bd0a-a09b9b57d855",
+      "name": "When clicking ‘Test workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "SendInvoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bb1354b8-3c0a-480b-85a8-7df82ed271e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "QcZp6zG96iHbDUg5",
+  "tags": []
+}

@@ -1,0 +1,311 @@
+{
+  "name": "cmd_invite",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -240
+      ],
+      "id": "9670bafa-4f2b-49d1-a6f6-171e2758ca9a",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "=Пошлите другу ссылку:",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a7bef913-5faf-439c-ae48-8c4573ed2d16",
+      "name": "SendInviteLinkPre1",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -240,
+        -240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "f803973a-f3f2-4478-84af-dd12330d5687",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const json=$node[\"Start\"].json;\nconst bot_username = json.config.bot.bot_username;\n\nconst botUrl = `https://t.me/${bot_username}`;\nconst userId = json.telegram.user_id;\n\n//const text = `${botUrl}?start=${userId}`;\n//const text = `<a href=\"${botUrl}?start=${userId}\">${botUrl}?start=${userId}</a>`;\nconst text = `${botUrl}?start=${userId}\n\nПодключите ВПН клиент и получите 100р.`;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        -240
+      ],
+      "id": "ddf51b94-1e0e-4d11-a0c0-28038608e0b2",
+      "name": "Link"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Когда ваш друг зайдет в наш бот по этой ссылке и создаст аккаунт, вы получите 50₽ на баланс!`;\n\nconst json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -240
+      ],
+      "id": "0af1719e-fc89-4370-b420-2e7f2da71edf",
+      "name": "Notes"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "={{$json.telegram.send_text}}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "815bc596-9fbd-44f3-b083-f3b4c3a64d33",
+      "name": "Send Link",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        140,
+        -240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "f803973a-f3f2-4478-84af-dd12330d5687",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🏠 Главное меню",
+                    "additionalFields": {
+                      "callback_data": "start"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "aec72afe-11ae-4ccd-9599-bf900e5e54c1",
+      "name": "Send Notes",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        500,
+        -240
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "0e719cb2-eaff-4358-9785-33cb4ba9be68",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "config": {
+            "bot": {
+              "bot_name": "VPN Client",
+              "bot_username": "VPNclientBot",
+              "bot_group": "VPNclient_chat",
+              "bot_channel": "VPNclient_news",
+              "bot_support": "VPNclient_support"
+            },
+            "tarif": {
+              "balance_no_referer": 100,
+              "balance_have_referer": 100,
+              "balance_to_referer": 50,
+              "pay_month": 100
+            }
+          },
+          "telegram": {
+            "update_id": 191616902,
+            "callback_query": {
+              "id": "1024610746966418565",
+              "from": {
+                "id": 238560779,
+                "is_bot": false,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "language_code": "en",
+                "is_premium": true
+              },
+              "message": {
+                "message_id": 505,
+                "from": {
+                  "id": 7432071568,
+                  "is_bot": true,
+                  "first_name": "VPN Client",
+                  "username": "VPN_ClientBot"
+                },
+                "chat": {
+                  "id": 238560779,
+                  "first_name": "Anton Dodonov",
+                  "username": "AntonDodonov",
+                  "type": "private"
+                },
+                "date": 1745382009,
+                "text": "Рады видеть вас снова, Anton Dodonov!\n\nВаш баланс 100.00₽ (~50 дней), аккаунт активен\nТариф 100.00₽/мес за 1 устройство, активно 1 устройство.\n\nЕсли вы потеряли настройки - вы можете повторно их скачать, нажав на кнопку \"Мои устройства\".\n\n👭 Пригласите друзей в наш сервис и получите 50₽ на баланс за каждого друга. Ваши друзья получат 100₽ на баланс!\n\n📌 Обязательно (!!) подпишитесь на наш канал @VPNclient_news",
+                "entities": [
+                  {
+                    "offset": 373,
+                    "length": 24,
+                    "type": "text_link",
+                    "url": "https://t.me/VPNclient_news"
+                  },
+                  {
+                    "offset": 398,
+                    "length": 15,
+                    "type": "mention"
+                  }
+                ],
+                "link_preview_options": {
+                  "is_disabled": true
+                },
+                "reply_markup": {
+                  "inline_keyboard": [
+                    [
+                      {
+                        "text": "📱💻 Мои устройства",
+                        "callback_data": "devices"
+                      }
+                    ],
+                    [
+                      {
+                        "text": "👭 Пригласить",
+                        "callback_data": "invite"
+                      },
+                      {
+                        "text": "📖 Помощь",
+                        "callback_data": "help"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "chat_instance": "2934002481829093501",
+              "data": "invite"
+            },
+            "from": {
+              "id": 238560779,
+              "is_bot": false,
+              "first_name": "Anton Dodonov",
+              "username": "AntonDodonov",
+              "language_code": "en",
+              "is_premium": true
+            },
+            "user_id": 238560779,
+            "chat_id": 238560779,
+            "send_text": "Когда ваш друг зайдет в наш бот по этой ссылке и создаст аккаунт, вы получите 50₽ на баланс!"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "SendInviteLinkPre1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendInviteLinkPre1": {
+      "main": [
+        [
+          {
+            "node": "Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link": {
+      "main": [
+        [
+          {
+            "node": "Send Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notes": {
+      "main": [
+        [
+          {
+            "node": "Send Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Link": {
+      "main": [
+        [
+          {
+            "node": "Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fc69053f-7e26-4cfd-aa18-ae2741b969d8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "cBrJaZBkZBpcakGo",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
+}

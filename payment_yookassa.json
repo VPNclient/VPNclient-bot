@@ -1,0 +1,145 @@
+{
+  "name": "payment_yookassa",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "yookassa-payment",
+        "options": {
+          "responseData": "Success"
+        }
+      },
+      "id": "99f10e99-b208-4cb5-9271-43e5ae6396b3",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "66990277-92a8-4a75-9452-4685fde26b90"
+    },
+    {
+      "parameters": {
+        "functionCode": "const data = $json.object;\n\nreturn [{\n  json: {\n    telegramId: data.metadata.telegramId,\n    amount: data.amount.value,\n    currency: data.amount.currency,\n    status: data.status,\n    paymentId: data.id,\n    datetime: data.created_at\n  }\n}];"
+      },
+      "id": "f4e1193d-90ef-48fa-ad49-44f3600d8c4d",
+      "name": "Extract Payment Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{$json[\"status\"]}}",
+              "value2": "succeeded"
+            }
+          ]
+        }
+      },
+      "id": "6705e595-3138-40b1-963f-bc1adca662a8",
+      "name": "Check Status = succeeded",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        500,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "0d6dbd78-8571-47a8-b48b-f97af04b002a",
+      "name": "Update DB or Balance",
+      "type": "n8n-nodes-base.mysql",
+      "typeVersion": 1,
+      "position": [
+        780,
+        200
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"telegramId\"]}}",
+        "text": "✅ Платёж успешно получен! Баланс пополнен на {{$json[\"amount\"]}} ₽",
+        "additionalFields": {}
+      },
+      "id": "d3a20604-a624-4436-9925-dadeba161b3c",
+      "name": "Send Telegram Confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        960,
+        20
+      ],
+      "webhookId": "62848aef-8ae3-423b-9519-1bcaf4f0fd0c",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Payment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Payment Data": {
+      "main": [
+        [
+          {
+            "node": "Check Status = succeeded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status = succeeded": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "abad79e0-3ae8-49bb-9ef5-4f0e2dd1a1d9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "vSugZuItwIpKvO3a",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T02:44:17.263Z",
+      "updatedAt": "2025-04-15T02:44:17.263Z",
+      "id": "f0utZXldA2O4c0xs",
+      "name": "Payments"
+    }
+  ]
+}

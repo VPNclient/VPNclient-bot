@@ -1,0 +1,935 @@
+{
+  "name": "cmd_help",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_vpn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_vpn"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fce65105-f456-405e-8cd9-2a34af2b22c1",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_install",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_install"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5f8c06ee-6866-4d53-b8a9-c313d2691f02",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_link",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_link"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "72c72cb5-b43a-4189-ad4f-84f0548829e3",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_speed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_speed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c85648b6-f1a8-4842-8dc2-efeb33de539f",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_tv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_tv"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4807e028-1a74-4eb4-862f-269843a41d8f",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "help_freeze",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_freeze"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5d82976a-20d3-4e76-87aa-23959e997d65",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "help_alt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help_alt"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "182730cc-316c-4c53-8184-b1c033a93eb1",
+                    "leftValue": "={{$json.telegram.message.text}}",
+                    "rightValue": "/help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a2e0d47e-330a-4584-93d8-e10cf2e05e91",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        360,
+        80
+      ],
+      "id": "e9d3c721-761c-4049-9532-e081146fcfd9",
+      "name": "Switch Help"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Проверьте следующие шаги:\n\n1. Убедитесь, что интернет-соединение активно (Wi-Fi или мобильная сеть).\n2. Перезапустите приложение и попробуйте снова подключиться.\n3. Проверьте, не истек ли срок действия подписки — команда /start покажет баланс.\n4. Попробуйте переключиться на другое устройство или заново загрузить конфигурацию через /devices.\n5. Если используется Android — дайте приложению доступ к VPN в настройках системы.\n6. Отключите другие VPN/брандмауэры/антивирусы, которые могут мешать подключению.\n7. Попробуйте другой протокол (например, Reality вместо VMess) — для этого удалите устройство и добавьте заново с другим типом.\n\n📩 Если ничего не помогло — напишите в поддержку, мы обязательно поможем!",
+        "additionalFields": {}
+      },
+      "name": "Send help_vpn",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        -400
+      ],
+      "id": "790ff88c-0218-493c-8daf-f20015022848",
+      "webhookId": "77becde3-8396-41e3-80ec-ca02206f0086",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Установка: скачайте приложение из маркета, вставьте конфигурацию и включите VPN.",
+        "additionalFields": {}
+      },
+      "id": "a9eda951-503c-4f2a-ad86-7627fd15c008",
+      "name": "Send help_install",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        -220
+      ],
+      "webhookId": "73e33b8e-deb7-42b5-b007-6cd2f03098f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Ссылка всегда доступна в разделе \"Мои устройства\" или по команде /devices.",
+        "additionalFields": {}
+      },
+      "id": "320385f5-6e4f-469d-9726-f630ed99a47f",
+      "name": "Send help_link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        -40
+      ],
+      "webhookId": "45d901a0-ac40-435f-a97d-829997a27151",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Попробуйте другой сервер. Скорость может зависеть от вашего провайдера или региона.",
+        "additionalFields": {}
+      },
+      "id": "b9b07682-3838-4b71-af73-3539d952a28e",
+      "name": "Send help_speed",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        160
+      ],
+      "webhookId": "b0d51d02-d877-4902-a679-4f42bac1260d",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Убедитесь, что устройство подключено к интернету и поддерживает Android TV.",
+        "additionalFields": {}
+      },
+      "id": "fb3e6579-2d1e-4611-bad1-7617b4874ac2",
+      "name": "Send help_tv",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        360
+      ],
+      "webhookId": "cf734601-dcf9-4247-b44c-0002852f28b8",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Вы можете заморозить аккаунт, если не планируете пользоваться сервисом временно.",
+        "additionalFields": {}
+      },
+      "id": "2b09f3e7-9864-47e7-9280-f873b29e2c8b",
+      "name": "Send help_freeze",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        560
+      ],
+      "webhookId": "8bfdcf0e-694f-42a4-b6eb-ff5cfaa11a8a",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Если протокол не работает, используйте альтернативный: Reality, Shadowsocks или Trojan.",
+        "additionalFields": {}
+      },
+      "id": "bd211c03-8f9e-4749-bd50-f2eb4f24946f",
+      "name": "Send help_alt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        760
+      ],
+      "webhookId": "be16b3e8-82a1-461e-968d-727d4ca64711",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🛠 VPN не работает",
+                    "additionalFields": {
+                      "callback_data": "help_vpn"
+                    }
+                  },
+                  {
+                    "text": "📲 Инструкция по установке",
+                    "additionalFields": {
+                      "callback_data": "help_install"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔗 Не могу найти ссылку",
+                    "additionalFields": {
+                      "callback_data": "help_link"
+                    }
+                  },
+                  {
+                    "text": "🐢 Низкая скорость",
+                    "additionalFields": {
+                      "callback_data": "help_speed"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📺 Телевизор (Android TV)",
+                    "additionalFields": {
+                      "callback_data": "help_tv"
+                    }
+                  },
+                  {
+                    "text": "❄️ Заморозка баланса",
+                    "additionalFields": {
+                      "callback_data": "help_freeze"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔄 Альтернативный протокол",
+                    "additionalFields": {
+                      "callback_data": "help_alt"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "name": "Send response /help",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1400,
+        -580
+      ],
+      "id": "1c0a1672-2b8e-40b6-b973-aba6e7606514",
+      "webhookId": "d7934871-5794-4151-a829-26200a3e2b84",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=\"Выберите тему, с которой нужна помощь:\";\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        860
+      ],
+      "id": "9512aac3-8ca6-48f8-bf30-8c4a2804fc29",
+      "name": "Response /help"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Проверьте следующие шаги:\n1. Убедитесь, что интернет-соединение активно (Wi-Fi или мобильная сеть).\n2. Перезапустите приложение и попробуйте снова подключиться.\n3. Проверьте, не истек ли срок действия подписки — команда /start покажет баланс.\n4. Попробуйте переключиться на другое устройство или заново загрузить конфигурацию через /devices.\n5. Если используется Android — дайте приложению доступ к VPN в настройках системы.\n6. Отключите другие VPN/брандмауэры/антивирусы, которые могут мешать подключению.\n7. Попробуйте другой протокол (например, Reality вместо VMess) — для этого удалите устройство и добавьте заново с другим типом.\n\n📩 Если ничего не помогло — напишите в поддержку, мы обязательно поможем!`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        -360
+      ],
+      "id": "ffce0e8b-433a-43ca-b58f-9cd9d5b7aef5",
+      "name": "Response help_vpn"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Установка: скачайте приложение из маркета, вставьте конфигурацию и включите VPN.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        -180
+      ],
+      "id": "5037be2b-b329-452f-b4f6-39917ffbd60f",
+      "name": "Response help_install"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Ссылка всегда доступна в разделе \"Мои устройства\" или по команде /devices.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        0
+      ],
+      "id": "8241b076-d17d-46ed-93c1-7212bab04154",
+      "name": "Response help_link"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Попробуйте другой сервер. Скорость может зависеть от вашего провайдера или региона.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        180
+      ],
+      "id": "b24ede92-9aab-4827-adcc-10552edfcb56",
+      "name": "Response help_speed"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Убедитесь, что устройство подключено к интернету и поддерживает Android TV.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        360
+      ],
+      "id": "4c679364-f254-4edf-b6fe-d98ba6198f74",
+      "name": "Response help_tv"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Вы можете заморозить аккаунт, если не планируете пользоваться сервисом временно.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        540
+      ],
+      "id": "ba85c121-dcbb-4a7a-8e78-d4bf52b485c5",
+      "name": "Response help_freeze"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text=`Если протокол не работает, используйте альтернативный: Reality, Shadowsocks или Trojan.`;\n\n$json.telegram.send_text=text;\n\n\nreturn [{\n  json: $json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        720
+      ],
+      "id": "abe1415b-86c0-4149-b1ad-017f3114b3d3",
+      "name": "Response help_alt"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🛠 VPN не работает",
+                    "additionalFields": {
+                      "callback_data": "help_vpn"
+                    }
+                  },
+                  {
+                    "text": "📲 Инструкция по установке",
+                    "additionalFields": {
+                      "callback_data": "help_install"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔗 Не могу найти ссылку",
+                    "additionalFields": {
+                      "callback_data": "help_link"
+                    }
+                  },
+                  {
+                    "text": "🐢 Низкая скорость",
+                    "additionalFields": {
+                      "callback_data": "help_speed"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📺 Телевизор (Android TV)",
+                    "additionalFields": {
+                      "callback_data": "help_tv"
+                    }
+                  },
+                  {
+                    "text": "❄️ Заморозка баланса",
+                    "additionalFields": {
+                      "callback_data": "help_freeze"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔄 Альтернативный протокол",
+                    "additionalFields": {
+                      "callback_data": "help_alt"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🏠 Главное меню",
+                    "additionalFields": {
+                      "callback_data": "start"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "name": "Send response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        180
+      ],
+      "id": "5fef4a47-84a1-4715-ae2c-92865e151254",
+      "webhookId": "d7934871-5794-4151-a829-26200a3e2b84",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        60,
+        200
+      ],
+      "id": "028f5a09-6f21-47c5-9ddd-c788e3eb88de",
+      "name": "Start"
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "telegram": {
+            "update_id": 191616753,
+            "message": {
+              "message_id": 310,
+              "from": {
+                "id": 238560779,
+                "is_bot": false,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "language_code": "en",
+                "is_premium": true
+              },
+              "chat": {
+                "id": 238560779,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "type": "private"
+              },
+              "date": 1745290735,
+              "text": "/help",
+              "entities": [
+                {
+                  "offset": 0,
+                  "length": 5,
+                  "type": "bot_command"
+                }
+              ]
+            },
+            "user_id": 238560779,
+            "chat_id": 238560779
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Switch Help": {
+      "main": [
+        [
+          {
+            "node": "Response help_vpn",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_install",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_speed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_tv",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_freeze",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response help_alt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response /help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response /help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response /help": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_vpn": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_install": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_link": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_speed": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_tv": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_freeze": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response help_alt": {
+      "main": [
+        [
+          {
+            "node": "Send response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Switch Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "14ddbdc3-e444-4a5f-b632-fbc9feaf4e04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "DwOrelcFO2IVNgW1",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
+}

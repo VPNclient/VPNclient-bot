@@ -1,5 +1,5 @@
 {
-  "name": "notifications.json",
+  "name": "notifications",
   "nodes": [
     {
       "parameters": {},
@@ -75,7 +75,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "cd4eba2a-310a-47db-bf77-abff962113d7",
+  "versionId": "9d0de9a8-6b95-4e2d-9d74-9799614aa24c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"

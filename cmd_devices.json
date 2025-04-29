@@ -1,0 +1,1917 @@
+{
+  "name": "cmd_devices",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM devices WHERE user_id=$1;",
+        "options": {
+          "queryReplacement": "=[ {{$json.telegram.user_id}} ]"
+        }
+      },
+      "id": "d2e767a5-6d7f-493d-9217-10290f90a857",
+      "name": "GetDevices",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        260,
+        880
+      ],
+      "typeVersion": 2.4,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const devices = items.map(item => item.json);\nlet text = '';\nconst inlineKeyboard = [];\nif (devices.length === 0) {\n  text = 'У вас нет активных устройств.\\nДобавьте устройство, чтобы начать пользоваться VPN.';\n} else {\n  text = `У вас активно ${devices.length} устройств:\\n`;\n  for (let dev of devices) {\n    const devId = dev.id;\n    const name = dev.device_name || 'Устройство ' + devId;\n    text += `- ${name} (ID: ${devId})\\n`;\n    inlineKeyboard.push([{ text: devId.toString(), callback_data: 'device_' + devId }]);\n  }\n}\n// Добавляем кнопки действий:\ninlineKeyboard.push([\n  { text: '➕ Добавить устройство', callback_data: 'devices_add' },\n  { text: '❌ Удалить устройство', callback_data: 'devices_delete' }\n]);\nreturn [{ json: { text: text, reply_markup: { inline_keyboard: inlineKeyboard } } }];"
+      },
+      "id": "876b3fd9-6d83-47cb-afb5-f937164514da",
+      "name": "PrepareDeviceList",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        920,
+        680
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Start\"].json[\"chat_id\"]}}",
+        "text": "={{$node[\"PrepareDeviceList\"].json[\"text\"]}}",
+        "replyMarkup": "=inlineKeyboard",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e4d35d8c-a8cd-4abe-bc54-2dd204d9ce27",
+      "name": "SendDeviceList",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1120,
+        680
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "3afefa93-b0c5-4b46-9bd4-1c8a89b2f133",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const data = $json[\"callback_query\"][\"data\"] || '';\nlet deviceType = '';\nif (data.includes('ios')) deviceType = 'iOS';\nif (data.includes('android') && !data.includes('tv')) deviceType = 'Android';\nif (data.includes('tv')) deviceType = 'Android TV';\nif (data.includes('mac')) deviceType = 'Mac';\nif (data.includes('windows')) deviceType = 'Windows';\n// Генерируем ссылку конфигурации (пример):\nconst token = Math.random().toString(36).slice(-6);\nconst configLink = `hitvpn://config-${token}`;\n// Шаблоны инструкций для каждого типа:\nlet instructions = '';\nswitch(deviceType) {\n  case 'iOS':\n    instructions = '1. Установите приложение HitVPN из AppStore\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение HitVPN и вставьте скопированную ссылку\\n4. Включите VPN.';\n    break;\n  case 'Android':\n    instructions = '1. Установите приложение HitVPN из Google Play\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Android TV':\n    instructions = '1. Установите приложение HitVPN на Android TV\\n2. Скопируйте ссылку настройки\\n3. Откройте приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Mac':\n    instructions = '1. Скачайте приложение HitVPN для macOS\\n2. Скопируйте ссылку настройки\\n3. Запустите приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n  case 'Windows':\n    instructions = '1. Скачайте приложение HitVPN для Windows\\n2. Скопируйте ссылку настройки\\n3. Запустите приложение и вставьте ссылку\\n4. Включите VPN.';\n    break;\n}\nreturn [{ json: { text: `Ваше устройство (${deviceType}) добавлено!\\nСсылка для настройки: ${configLink}\\n\\nИнструкция для ${deviceType}:\\n${instructions}` } }];"
+      },
+      "id": "28d7709c-a743-4c08-b123-242011672ce7",
+      "name": "PrepareConfigMessage",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        2140,
+        1200
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "={{$node[\"PrepareConfigMessage\"].json[\"text\"]}}",
+        "additionalFields": {}
+      },
+      "id": "36cb0ce9-cf59-46f6-ab96-1ec78c388928",
+      "name": "SendConfig",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2340,
+        1200
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "bb844955-a59e-448b-aeaf-6a535a9a79ee",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const devices = items.map(i=>i.json);\nlet text = '';\nconst inlineKeyboard = [];\nif (devices.length === 0) {\n  text = 'У вас нет активных устройств для удаления.';\n} else {\n  text = 'Выберите устройство для удаления:\\n⚠️ ВНИМАНИЕ: перед удалением выключите VPN!\\n';\n  for (let dev of devices) {\n    const id = dev.id; const name = dev.device_name || `Устройство ${id}`;\n    text += `- ${name} (ID: ${id})\\n`;\n    inlineKeyboard.push([{ text: `Удалить ${id}`, callback_data: `delete_${id}` }]);\n  }\n}\nreturn [{ json: { text, reply_markup: { inline_keyboard: inlineKeyboard } } }];"
+      },
+      "id": "1282c93f-d98a-429e-a487-d0b7bedc1994",
+      "name": "PrepareDeleteList",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        2180,
+        780
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "={{$node[\"PrepareDeleteList\"].json[\"text\"]}}",
+        "additionalFields": {}
+      },
+      "id": "9df30259-af5c-46dd-9d64-95dcf166948d",
+      "name": "SendDeleteList",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2380,
+        780
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "a9e815f8-9c09-4787-b6c2-a148bf4f3cac",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1",
+        "options": {}
+      },
+      "id": "66c57747-2e34-4854-be09-799bd7171f99",
+      "name": "DeleteDevice",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2600,
+        780
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Устройство удалено. Абонентская плата за него больше не начисляется.",
+        "additionalFields": {}
+      },
+      "id": "203fe94a-ab0b-47ee-9d3c-728034850dc8",
+      "name": "SendDeleteConfirm",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2800,
+        780
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "83c83511-86cd-4ffc-bb08-1c0d7889dbf5",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1",
+        "options": {}
+      },
+      "id": "82bc5c81-758b-4d65-b930-cfb6a2700a37",
+      "name": "GetDevices1",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        2000,
+        780
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1020,
+        180
+      ],
+      "id": "9466767b-4240-4154-8021-0fa7dc289a41",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "jsCode": "const devices = $json.devices || [];\n\nreturn [{\n  json: {\n    devices_count: devices.length,\n    devices: devices,\n    ...$node[\"Start\"].json\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        880
+      ],
+      "id": "6c7698c2-f766-422e-afa5-786e9806789a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE devices (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    user_id BIGINT NOT NULL,\n    device_name VARCHAR(255),\n    marzban_id VARCHAR(255),\n    config_url TEXT,\n    status ENUM('active', 'inactive', 'deleted') DEFAULT 'active',\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    FOREIGN KEY (user_id) REFERENCES users(id)\n);",
+        "options": {}
+      },
+      "id": "8571ff86-0cf5-4863-af92-265208964c62",
+      "name": "CreateDevices",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -1100,
+        -660
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c071b6a0-89c3-4bb2-82ed-676051f65b03",
+              "leftValue": "={{$json.devices_count}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        880
+      ],
+      "id": "ca0c1759-ffa5-41e2-96f0-2ed64515a530",
+      "name": "IfHaveDevices"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "={{$json.telegram.send_text}}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "a2f97c3c-97d8-48a3-a048-833f5ceddb67",
+      "name": "Send NoDevices",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1140,
+        1080
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "3afefa93-b0c5-4b46-9bd4-1c8a89b2f133",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const bot_channel=$json.config.bot.bot_channel;\n\nconst text = `У вас нет активных устройств, баланс не расходуется\nДавайте настроим ваш VPN!\n📌 Обязательно !! подпишитесь на наш канал [@${bot_channel}](https://t.me/${bot_channel})!`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        1080
+      ],
+      "id": "7e1550e4-f958-4452-b914-e2be5e38b054",
+      "name": "NoDevices"
+    },
+    {
+      "parameters": {
+        "functionCode": "const buttons = $json.buttons || [\n  { text: \"Настройки\", callback_data: \"settings\" },\n  { text: \"Поддержка\", callback_data: \"support\" },\n  { text: \"Выход\", callback_data: \"logout\" }\n];\n\nconst inlineKeyboard = buttons.map(btn => [btn]);\n\nreturn [{\n  json: {\n    chat_id: $json.chat_id || 123456789,\n    text: \"Выберите действие:\",\n    reply_markup: JSON.stringify({\n      inline_keyboard: inlineKeyboard\n    })\n  }\n}];"
+      },
+      "name": "Create Inline Keyboard",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        220
+      ],
+      "id": "053785a6-63ef-4469-b58f-e2c262b703a8"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Start\"].json[\"user_id\"]}}",
+        "text": "={{$json[\"text\"]}}",
+        "replyMarkup": "=inlineKeyboard",
+        "forceReply": {},
+        "replyKeyboardOptions": {},
+        "replyKeyboardRemove": {},
+        "additionalFields": {}
+      },
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2300,
+        220
+      ],
+      "id": "d527f6db-2b8f-401b-bbf0-2475b7e310f8",
+      "webhookId": "b32c43cd-3adf-48b9-9896-fabd721d3beb",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "⚠️ Внимание! Вы добавляете еще одно устройство. Стоимость 100₽/мес за каждое дополнительное устройство.\\nВыберите тип устройства:",
+        "additionalFields": {}
+      },
+      "id": "6325dbfb-e143-485f-b6cb-1aed8568270e",
+      "name": "AskDeviceType1",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2500,
+        500
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Start\"].json[\"chat_id\"]}}",
+        "text": "⚠️ Внимание! Вы добавляете еще одно устройство. Стоимость 100₽/мес за каждое дополнительное устройство.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4423f7b6-7d3a-47ae-a727-cc3f95361934",
+      "name": "AskDeviceWarning",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2820,
+        340
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `\nВы ещё не создали аккаунт!\n✋ Создайте аккаунт для продолжения работы:\n\n⬇️⬇️ *Нажмите на кнопку* ⬇️⬇️`;\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        720
+      ],
+      "id": "681b79b0-d1a7-464c-a102-389ffc512754",
+      "name": "NotActivated"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🚀 Подключить VPN 🚀",
+                    "additionalFields": {
+                      "callback_data": "start_activate"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "id": "f206aa26-a59e-4be3-9598-7fe56391c725",
+      "name": "Send NotActivated",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2580,
+        280
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const json=$node[\"Start\"].json;\n//const json=$json;\n\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        1080
+      ],
+      "id": "6e2416ce-acd0-4914-ba2d-a0c30ecb143f",
+      "name": "Restore"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Поздравляем, мы добавили настройки устройства`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -600
+      ],
+      "id": "811f1600-483b-47bf-bcea-25ba8ce20582",
+      "name": "add_ios"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "889e81e2-d1b5-4ccd-a61e-51096457b3fc",
+      "name": "Send Added",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        1360,
+        -220
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Поздравляем, мы добавили настройки устройства`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -420
+      ],
+      "id": "bc910752-d6b0-419b-bd0b-9df583f99081",
+      "name": "add_android"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5ce035c-28c6-4feb-a3b2-8a0377b13669",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices_add"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "302b3c44-d844-481f-8c66-aa54b8cd1780",
+                    "leftValue": "{{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_desktop",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices_add_desktop"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices_add_*"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "53087c37-6744-4063-a7b2-e655ba33b76c",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "devices_remove",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices_remove"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "182730cc-316c-4c53-8184-b1c033a93eb1",
+                    "leftValue": "={{$json.telegram.message.text }}",
+                    "rightValue": "/devices",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/devices"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "35dab6ea-bc1d-4eec-8098-296903f27693",
+                    "leftValue": "={{$json.telegram.callback_query.data }}",
+                    "rightValue": "devices",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "dc966ec2-8128-44da-a429-b33cf62d694d",
+                    "leftValue": "={{$json.telegram.callback_query.data}}",
+                    "rightValue": "start_activate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start_activate"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -400,
+        300
+      ],
+      "id": "8bff0997-3735-4e03-b62b-c4f9add678c6",
+      "name": "Switch Cmd"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e8e2ab1c-1896-46ef-bfed-ac371f87037f",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_ios",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ios"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8c7002cc-85de-42f9-9252-b67c469b55bd",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_android",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "android"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "282ca238-5287-4567-a37c-1fc84289b00b",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_macos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "macos"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "22288705-907f-4e21-9ce6-e997ab2eeb51",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_windows",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "windows"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "974711c9-29ed-4d52-9de7-99ee33847a86",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_tv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tv"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d488be5d-038f-441b-9a42-70652e7ede39",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add_computer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "computer"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices_add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices_add"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        -280
+      ],
+      "id": "660586c9-2e1e-4ebf-bf36-dd8e0794be0f",
+      "name": "Switch devices_add"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Поздравляем, мы добавили настройки устройства`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -240
+      ],
+      "id": "9181d57c-3cf7-41d5-8a8f-b0d7d8dbeadc",
+      "name": "add_macos"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Поздравляем, мы добавили настройки устройства`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -80
+      ],
+      "id": "b51858dc-949c-47af-8742-e99dc0670e8f",
+      "name": "add_windows"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Поздравляем, мы добавили настройки устройства`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        80
+      ],
+      "id": "9ed77dd7-b2c0-43ae-82df-13a343943598",
+      "name": "add_tv"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://marzban.nativemind.net/api/user",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbnRvbmQiLCJhY2Nlc3MiOiJzdWRvIiwiaWF0IjoxNzQ1MzIwODc4LCJleHAiOjE3NDU0MDcyNzh9.UtSBYgQOlE5csoazwuHfLO4_IJLPEtFP0Mo9E4BXH9s"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "={\n  \"data_limit\": 0,\n  \"data_limit_reset_strategy\": \"no_reset\",\n  \"expire\": 0,\n  \"inbounds\": {\n    \"vless\": [\n      \"VLESS TCP REALITY\",\n      \"VLESS GRPC REALITY\"\n    ],\n    \"vmess\": [\n      \"VMess TCP\",\n      \"VMess Websocket\"\n    ]\n  },\n  \"next_plan\": {\n    \"add_remaining_traffic\": false,\n    \"data_limit\": 0,\n    \"expire\": 0,\n    \"fire_on_either\": true\n  },\n  \"note\": \"\",\n  \"on_hold_expire_duration\": 0,\n  \"on_hold_timeout\": \"2023-11-03T20:30:00\",\n  \"proxies\": {\n    \"vless\": {},\n    \"vmess\": {\n      \"id\": \"35e4e39c-7d5c-4f4b-8b71-558e4f37ff53\"\n    }\n  },\n  \"status\": \"active\",\n  \"username\": \"user1234\"\n}",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2020,
+        -420
+      ],
+      "id": "5c08b4b8-e144-4623-89ed-08747a9bed6c",
+      "name": "Marzban DeviceAdd",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "mcCK6nsAMOFk5s3t",
+          "name": "Marzban Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://marzban.nativemind.net/api/admin/token",
+        "sendHeaders": true,
+        "specifyHeaders": "json",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "username",
+              "value": "antond"
+            },
+            {
+              "name": "password",
+              "value": "lXdEJM!!3#aWr&lS!rw@4B!Axy3^"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2020,
+        -200
+      ],
+      "id": "54492b14-8823-4ca5-9244-7ed0e2411ca4",
+      "name": "Marzban Authorize"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO devices (\n    user_id,\n    device_name,\n    marzban_id,\n    config_url,\n    status\n) VALUES (\n    $1,\n    $2,\n    $3,\n    $4,\n    $5\n);\n",
+        "options": {
+          "queryReplacement": "{{ $json.telegram.user_id }},\n\"test\",\n1,\n\"http://\",\n\"123\""
+        }
+      },
+      "id": "6f676779-88b7-4c71-9888-79dd5a148abd",
+      "name": "SQL DeviceAdd",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        60,
+        220
+      ],
+      "typeVersion": 2.4,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Пожалуйста, выберите тип устройства:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📱 iPhone / iPad",
+                    "additionalFields": {
+                      "callback_data": "devices_add_ios"
+                    }
+                  },
+                  {
+                    "text": "📱 Android",
+                    "additionalFields": {
+                      "callback_data": "devices_add_android"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🖥 Компьютер",
+                    "additionalFields": {
+                      "callback_data": "devices_add_desktop"
+                    }
+                  },
+                  {
+                    "text": "📺 Телевизор",
+                    "additionalFields": {
+                      "callback_data": "devices_add_tv"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9b153610-4c2d-42ed-896e-4d5c61ad1d3b",
+      "name": "Send AskDeviceType",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        220,
+        -640
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Пожалуйста, выберите тип устройства:`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        40,
+        -640
+      ],
+      "id": "151c2caf-2243-4296-8cbd-716b388d7214",
+      "name": "AskDeviceType"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Apple MacOS",
+                    "additionalFields": {
+                      "callback_data": "devices_add_macos"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Microsoft Windows",
+                    "additionalFields": {
+                      "callback_data": "devices_add_windows"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "32e47dfe-23c4-420c-9c53-7ff63133272b",
+      "name": "Send AskDesktopOS",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        220,
+        -440
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "21b8082a-2e49-43b9-9ea4-8d63f4dd3372",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Выберите тип операционной системы компьютера:`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        40,
+        -440
+      ],
+      "id": "c49f7df3-0fc7-411f-a47a-c0f771cd3b50",
+      "name": "AskDesktopOS"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🚀 Подключить VPN 🚀",
+                    "additionalFields": {
+                      "callback_data": "start_activate"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "4545e98e-4196-44ff-82ae-247eabe1b187",
+      "name": "Send Activate",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -220,
+        720
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "6e946434-be3a-4505-8523-1876c298dc58",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e5ce035c-28c6-4feb-a3b2-8a0377b13669",
+                    "leftValue": "={{$json.user.activated}}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "activated"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "110cb00a-ce2a-4205-bbe8-bac1adb60101",
+                    "leftValue": false,
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "first_start"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -720,
+        540
+      ],
+      "id": "89a49594-abbf-4794-afe1-31009de712f3",
+      "name": "Switch IfActivated"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = `Пожалуйста, выберите тип устройства:`;\n\n\n// const json=$node[\"Start\"].json;\nconst json=$json;\n\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -840,
+        180
+      ],
+      "id": "b3239ea3-ca9b-42fd-88be-49f13932f28c",
+      "name": "AskDeviceTypeX"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id}}",
+        "text": "Пожалуйста, выберите тип устройства:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📱 iPhone / iPad",
+                    "additionalFields": {
+                      "url": "https://marzban.nativemind.net/sub/dGVzdCwxNzQ1NDAwMjky9t1mVbl2XH"
+                    }
+                  },
+                  {
+                    "text": "📱 Android",
+                    "additionalFields": {
+                      "url": "https://marzban.nativemind.net/sub/dGVzdCwxNzQ1NDAwMjky9t1mVbl2XH"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🖥 Компьютер",
+                    "additionalFields": {
+                      "url": "https://marzban.nativemind.net/sub/dGVzdCwxNzQ1NDAwMjky9t1mVbl2XH"
+                    }
+                  },
+                  {
+                    "text": "📺 Телевизор",
+                    "additionalFields": {
+                      "url": "https://marzban.nativemind.net/sub/dGVzdCwxNzQ1NDAwMjky9t1mVbl2XH"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "886948ce-5966-4ed3-a385-4ede0f3cf267",
+      "name": "Send AskDeviceTypeX",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -660,
+        180
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "285d3479-40dd-468b-904d-249e8ad4c7bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "referrer": {
+            "id": 6938197279,
+            "username": "vpnclient_support",
+            "first_name": "VPN Client",
+            "last_name": "Support",
+            "language_code": "en",
+            "is_premium": 0,
+            "referrer_id": null,
+            "balance": "150.00",
+            "tarif": "100.00",
+            "activated": 1,
+            "utm": "238560779",
+            "created_at": "2025-04-23 10:27:49",
+            "activated_at": "2025-04-23 10:35:10",
+            "updated_at": "2025-04-23 10:39:29"
+          },
+          "user": {
+            "id": 238560779,
+            "username": "AntonDodonov",
+            "first_name": "Anton Dodonov",
+            "last_name": "",
+            "language_code": "en",
+            "is_premium": 1,
+            "referrer_id": 6938197279,
+            "balance": "100.00",
+            "tarif": "100.00",
+            "activated": 1,
+            "utm": "6938197279",
+            "created_at": "2025-04-23 10:39:25",
+            "activated_at": "2025-04-23 10:39:30",
+            "updated_at": "2025-04-23 10:58:04"
+          },
+          "args": {
+            "referrer_id": 0,
+            "utm": ""
+          },
+          "config": {
+            "bot": {
+              "bot_name": "VPN Client",
+              "bot_username": "VPNclientBot",
+              "bot_group": "VPNclient_chat",
+              "bot_channel": "VPNclient_news",
+              "bot_support": "VPNclient_support"
+            },
+            "tarif": {
+              "balance_no_referer": 100,
+              "balance_have_referer": 100,
+              "balance_to_referer": 50,
+              "pay_month": 100
+            }
+          },
+          "telegram": {
+            "update_id": 191616981,
+            "callback_query": {
+              "id": "1024610747855249218",
+              "from": {
+                "id": 238560779,
+                "is_bot": false,
+                "first_name": "Anton Dodonov",
+                "username": "AntonDodonov",
+                "language_code": "en",
+                "is_premium": true
+              },
+              "message": {
+                "message_id": 651,
+                "from": {
+                  "id": 7432071568,
+                  "is_bot": true,
+                  "first_name": "VPN Client",
+                  "username": "VPN_ClientBot"
+                },
+                "chat": {
+                  "id": 238560779,
+                  "first_name": "Anton Dodonov",
+                  "username": "AntonDodonov",
+                  "type": "private"
+                },
+                "date": 1745405474,
+                "text": "Рады видеть вас снова, Anton Dodonov!\n\nВаш баланс 100.00₽ (~30 дней), аккаунт активен\nТариф 100.00₽/мес за 1 устройство, активно 1 устройство.\n\nЕсли вы потеряли настройки - вы можете повторно их скачать, нажав на кнопку \"Мои устройства\".\n\n👭 Пригласите друзей в наш сервис и получите 50₽ на баланс за каждого друга. Ваши друзья получат 100₽ на баланс!\n\n📌 Обязательно (!!) подпишитесь на наш канал @VPNclient_news",
+                "entities": [
+                  {
+                    "offset": 373,
+                    "length": 24,
+                    "type": "text_link",
+                    "url": "https://t.me/VPNclient_news"
+                  },
+                  {
+                    "offset": 398,
+                    "length": 15,
+                    "type": "mention"
+                  }
+                ],
+                "link_preview_options": {
+                  "is_disabled": true
+                },
+                "reply_markup": {
+                  "inline_keyboard": [
+                    [
+                      {
+                        "text": "📱💻 Мои устройства",
+                        "callback_data": "devices"
+                      }
+                    ],
+                    [
+                      {
+                        "text": "👭 Пригласить",
+                        "callback_data": "invite"
+                      },
+                      {
+                        "text": "📖 Помощь",
+                        "callback_data": "help"
+                      }
+                    ]
+                  ]
+                }
+              },
+              "chat_instance": "2934002481829093501",
+              "data": "devices"
+            },
+            "from": {
+              "id": 238560779,
+              "is_bot": false,
+              "first_name": "Anton Dodonov",
+              "username": "AntonDodonov",
+              "language_code": "en",
+              "is_premium": true
+            },
+            "user_id": 238560779,
+            "chat_id": 238560779,
+            "send_text": "У вас нет активных устройств, баланс не расходуется\nДавайте настроим ваш VPN!\n📌 Обязательно !! подпишитесь на наш канал [@VPNclient_news](https://t.me/VPNclient_news)!"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "PrepareConfigMessage": {
+      "main": [
+        [
+          {
+            "node": "SendConfig",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetDevices": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PrepareDeviceList": {
+      "main": [
+        [
+          {
+            "node": "SendDeviceList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GetDevices1": {
+      "main": [
+        [
+          {
+            "node": "PrepareDeleteList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PrepareDeleteList": {
+      "main": [
+        [
+          {
+            "node": "SendDeleteList",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendDeleteList": {
+      "main": [
+        [
+          {
+            "node": "DeleteDevice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendDeleteConfirm": {
+      "main": [
+        []
+      ]
+    },
+    "DeleteDevice": {
+      "main": [
+        [
+          {
+            "node": "SendDeleteConfirm",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "AskDeviceTypeX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "IfHaveDevices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IfHaveDevices": {
+      "main": [
+        [
+          {
+            "node": "PrepareDeviceList",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NoDevices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NoDevices": {
+      "main": [
+        [
+          {
+            "node": "Send NoDevices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Inline Keyboard": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send NoDevices": {
+      "main": [
+        [
+          {
+            "node": "Restore",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AskDeviceWarning": {
+      "main": [
+        []
+      ]
+    },
+    "NotActivated": {
+      "main": [
+        [
+          {
+            "node": "Send Activate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore": {
+      "main": [
+        [
+          {
+            "node": "AskDeviceType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_ios": {
+      "main": [
+        [
+          {
+            "node": "Send Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_android": {
+      "main": [
+        [
+          {
+            "node": "Send Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Cmd": {
+      "main": [
+        [
+          {
+            "node": "AskDeviceType",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AskDesktopOS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SQL DeviceAdd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "GetDevices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetDevices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GetDevices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch devices_add": {
+      "main": [
+        [
+          {
+            "node": "add_ios",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add_android",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add_macos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add_windows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "add_tv",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "add_macos": {
+      "main": [
+        [
+          {
+            "node": "Send Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_windows": {
+      "main": [
+        [
+          {
+            "node": "Send Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add_tv": {
+      "main": [
+        [
+          {
+            "node": "Send Added",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL DeviceAdd": {
+      "main": [
+        []
+      ]
+    },
+    "Send AskDeviceType": {
+      "main": [
+        []
+      ]
+    },
+    "Send AskDesktopOS": {
+      "main": [
+        []
+      ]
+    },
+    "AskDesktopOS": {
+      "main": [
+        [
+          {
+            "node": "Send AskDesktopOS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AskDeviceType": {
+      "main": [
+        [
+          {
+            "node": "Send AskDeviceType",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch IfActivated": {
+      "main": [
+        [
+          {
+            "node": "Switch Cmd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch Cmd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "NotActivated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AskDeviceTypeX": {
+      "main": [
+        [
+          {
+            "node": "Send AskDeviceTypeX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4a64da32-ed83-441b-aacc-fe2f0a9983a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "dinTFsFtKgJKMNH9",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
+}

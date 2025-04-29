@@ -1,84 +1,8 @@
 {
-  "name": "main.json",
+  "name": "main",
   "nodes": [
     {
       "parameters": {
-        "workflowId": "w3lUqmSM8mC6WKJd",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        400,
-        -40
-      ],
-      "id": "43b508fa-12cc-4d65-b2e4-d21869977a24",
-      "name": "Execute /start",
-      "notes": "sub workflow start.json"
-    },
-    {
-      "parameters": {
-        "workflowId": "devices.json",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        400,
-        120
-      ],
-      "id": "3c590681-2f3f-4c89-a2b4-59de36b2c53e",
-      "name": "Execute /devices"
-    },
-    {
-      "parameters": {
-        "workflowId": "cBrJaZBkZBpcakGo",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        400,
-        300
-      ],
-      "id": "a9ec25a5-8e8c-42e4-a647-27df527c24d8",
-      "name": "Execute /invite",
-      "notes": "sub workflow invite.json"
-    },
-    {
-      "parameters": {
-        "workflowId": "DwOrelcFO2IVNgW1",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        400,
-        460
-      ],
-      "id": "8df8600a-45bc-4778-90dd-b6b45f841b84",
-      "name": "Execute /help",
-      "notes": "sub workflow help.json"
-    },
-    {
-      "parameters": {
-        "workflowId": "C8DvVNJJfaCR7YSp",
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1,
-      "position": [
-        400,
-        660
-      ],
-      "id": "88527429-b144-4e35-b823-d13ab5fc54d7",
-      "name": "Execute /privacy",
-      "notes": "sub workflow privacy.json"
-    },
-    {
-      "parameters": {
         "rules": {
           "values": [
             {
@@ -91,115 +15,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
-                    "rightValue": "devices",
-                    "operator": {
-                      "type": "string",
-                      "operation": "startsWith"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "devices"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{$json[\"callback_query\"][\"data\"]}}",
-                    "rightValue": "help",
-                    "operator": {
-                      "type": "string",
-                      "operation": "startsWith"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "help"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        100,
-        1180
-      ],
-      "id": "7ea1cf13-1435-4c76-9e69-7e6be33488d4",
-      "name": "Switch Callback"
-    },
-    {
-      "parameters": {
-        "updates": [
-          "*"
-        ],
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        -300,
-        160
-      ],
-      "id": "2d1ef5d7-9c3c-4e84-b08f-4836173ab228",
-      "name": "Telegram Trigger Messages",
-      "webhookId": "14d20b1e-4ecb-496f-935a-838cbb28cd29",
-      "credentials": {
-        "telegramApi": {
-          "id": "9hfs9gxsjeru7ML3",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{$json[\"message\"][\"chat\"][\"id\"]}}",
-        "text": "test ok",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        620,
-        940
-      ],
-      "id": "91e3d0b7-88ff-4dc6-b91c-3a730211ccee",
-      "name": "Telegram",
-      "webhookId": "78019176-14de-42a1-a736-031361d83bc9",
-      "credentials": {
-        "telegramApi": {
-          "id": "9hfs9gxsjeru7ML3",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "leftValue": "={{ $json.telegram.message.text }}",
                     "rightValue": "/start",
                     "operator": {
                       "type": "string",
@@ -222,7 +38,31 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "id": "6cb10995-9e87-4480-b882-7b7002bc34c2",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.telegram.message.text }}",
                     "rightValue": "/devices",
                     "operator": {
                       "type": "string",
@@ -245,11 +85,328 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "id": "7a2d1961-66a9-459d-a6c3-495d43821444",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "devices",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "devices"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        940,
+        200
+      ],
+      "id": "b25b4880-66e8-4a25-ac1d-1752b1740b8e",
+      "name": "Switch Command"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "w3lUqmSM8mC6WKJd",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1300,
+        40
+      ],
+      "id": "df956aa9-dc3b-434b-b2ba-50257b1c3d33",
+      "name": "cmd_start.json"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "C8DvVNJJfaCR7YSp",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1240,
+        40
+      ],
+      "id": "81120112-bfc9-459d-810f-52b5b503454f",
+      "name": "cmd_privacy.json"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "DwOrelcFO2IVNgW1",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1240,
+        -140
+      ],
+      "id": "4060685d-b6fd-460b-b5f5-0d8a2f6ab2ff",
+      "name": "cmd_help.json"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "cBrJaZBkZBpcakGo",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1240,
+        -320
+      ],
+      "id": "77c06b4f-bb89-4a18-8843-b14d53bf3dc8",
+      "name": "cmd_invite.json"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dinTFsFtKgJKMNH9",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        400
+      ],
+      "id": "3b00e13d-b7c2-49d4-9546-c4be96e50623",
+      "name": "cmd_devices.json"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    user:$json,\n    ...$node[\"Args\"].json,    \n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        360
+      ],
+      "id": "cceecef2-1400-4aae-8dd4-1c6c0a0b1ad3",
+      "name": "User"
+    },
+    {
+      "parameters": {
+        "jsCode": "const referrer = $json;\n\n\nreturn [{\n  json: {\n    referrer,\n    ...$node[\"User\"].json    \n\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        80
+      ],
+      "id": "301d4073-9894-4873-be86-cadb2fed062c",
+      "name": "Referer"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2040,
+        -80
+      ],
+      "id": "2d1ef5d7-9c3c-4e84-b08f-4836173ab228",
+      "name": "Telegram Trigger",
+      "webhookId": "14d20b1e-4ecb-496f-935a-838cbb28cd29",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const messageText = $json.telegram.message?.text || \"\";\n// messageText=\"/start\";\n// messageText=\"/start 1001\";\n// messageText=\"/start 1001_a_b_c\";\n// messageText=\"/start a_b_c\";\n\nconst args = messageText.split(\" \")[1] || \"\"; // всё, что идёт после /start\n\nconst splitIndex = args.indexOf('_');\nlet referrer_id = 0; // По умолчанию 0\nlet utm = args;       // По умолчанию \"\"\n\n// Если есть '_', разделяем строку\nif (splitIndex !== -1) {\n    const firstPart = args.slice(0, splitIndex);\n    referrer_id = firstPart ? (parseInt(firstPart) || 0) : 0;\n    //utm = args.slice(splitIndex + 1);\n} \n// Если '_' нет, пробуем интерпретировать всю строку как число (referer_id)\nelse if (args) {\n    referrer_id = parseInt(args) || 0;\n}\n\n\nreturn [{\n  json: {\n    args:\n    {\n      referrer_id,\n      utm\n    },\n    ...$json\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1240,
+        220
+      ],
+      "id": "848c5cff-f4fe-4f6f-9eff-1b99c45f601a",
+      "name": "Args"
+    },
+    {
+      "parameters": {
+        "jsCode": "let user_id = null;\nlet chat_id = null;\n\n// Если это callback_query (например, кнопка)\nif ($json.callback_query) {\n  user_id = $json.callback_query.from.id;\n  chat_id = $json.callback_query.message.chat.id;\n  $json.from=$json.callback_query.from;\n}\n\n// Если это обычное сообщение (например, команда /start)\nelse if ($json.message) {\n  user_id = $json.message.from.id;\n  chat_id = $json.message.chat.id;\n  $json.from=$json.message.from;\n}\n\nreturn [{\n  json: {    \n    telegram:{\n      ...$json,\n      user_id,\n      chat_id,\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1860,
+        -80
+      ],
+      "id": "2fb91688-e77e-45a5-a98f-6a8af29f4215",
+      "name": "Telergam"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM users WHERE id = $1 LIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ $json.user.referrer_id }},1 "
+        }
+      },
+      "id": "6083b066-9629-4ae8-bc5a-54db2032ac08",
+      "name": "RefererGet",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        500,
+        80
+      ],
+      "typeVersion": 2.4,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"telegram\"][\"chat_id\"]}}",
+        "text": "test ok",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1240,
+        -500
+      ],
+      "id": "91e3d0b7-88ff-4dc6-b91c-3a730211ccee",
+      "name": "Send Test",
+      "webhookId": "78019176-14de-42a1-a736-031361d83bc9",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.telegram.message.text}}",
+                    "rightValue": "/test",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/test"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "2a9e0510-77b4-4f62-9866-01926bf7228d",
+                    "leftValue": "={{$json.telegram.message.text}}",
                     "rightValue": "/invite",
                     "operator": {
                       "type": "string",
-                      "operation": "equals"
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
                     }
                   }
                 ],
@@ -268,11 +425,36 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "id": "dff3e57c-64b4-4a83-9713-6f1e7a3ca70f",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "invite",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invite"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b3e4002a-e39b-4b1c-b44c-8aca1ec1e178",
+                    "leftValue": "={{$json.telegram.message.text}}",
                     "rightValue": "/help",
                     "operator": {
                       "type": "string",
-                      "operation": "equals"
+                      "operation": "startsWith"
                     }
                   }
                 ],
@@ -291,7 +473,31 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                    "id": "ae500020-2962-4bc0-805f-25826c93677b",
+                    "leftValue": "={{ $json.telegram.callback_query.data }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.telegram.message.text }}",
                     "rightValue": "/privacy",
                     "operator": {
                       "type": "string",
@@ -315,19 +521,84 @@
                 "conditions": [
                   {
                     "id": "c32c6396-4239-4ba0-a6e1-e1097689794f",
-                    "leftValue": "={{$json[\"message\"][\"text\"]}}",
-                    "rightValue": "/test",
+                    "leftValue": 0,
+                    "rightValue": 0,
                     "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
+                      "type": "number",
+                      "operation": "equals"
                     }
                   }
                 ],
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "/test"
+              "outputKey": "other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1500,
+        -140
+      ],
+      "id": "b23d49a2-b91b-4a88-9d4b-4a811de31557",
+      "name": "Switch Prepare"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO users (\n  id,\n  username,\n  first_name,\n  last_name,\n  language_code,\n  is_premium,\n  balance,\n  tarif,\n  referrer_id,\n  activated,\n  utm\n)\nVALUES (\n  $1,\n  $2,\n  $3,\n  $4,\n  $5,\n  $6,\n  0,\n  0,\n  $7,\n  FALSE,\n  $8\n)\nON DUPLICATE KEY UPDATE\n  username = VALUES(username),\n  first_name = VALUES(first_name),\n  last_name = VALUES(last_name),\n  language_code = VALUES(language_code),\n  is_premium = VALUES(is_premium),\n\n  -- Меняем только если пользователь не активирован и referrer ещё не установлен\n  referrer_id = IF(NOT activated AND referrer_id=0 AND VALUES(referrer_id)<>0, VALUES(referrer_id), referrer_id),\n\n  -- utm меняем только если пользователь ещё не активирован\n  utm = IF(NOT activated AND utm='', VALUES(utm), utm),\n  \n  -- фиксируем факт обновления\n  updated_at = NOW();\n\nSELECT * FROM users WHERE id = $1;",
+        "options": {
+          "queryReplacement": "=\n   {{ $json.telegram.user_id }},\n   {{ ($json.telegram.from.username || \"\").replace(/'/g, \"\\\\'\") }},\n   {{ ($json.telegram.from.first_name || \"\").replace(/'/g, \"\\\\'\") }},\n   {{ ($json.telegram.from.last_name || \"\").replace(/'/g, \"\\\\'\") }},\n   {{ ($json.telegram.from.language_code || \"\").replace(/'/g, \"\\\\'\") }},\n   {{ ($json.telegram.from.is_premium) ? 1 : 0 }},\n    {{ $json.args.referrer_id }},\n    {{ $json.args.utm }}\n",
+          "replaceEmptyStrings": false
+        }
+      },
+      "id": "c9338a2b-b319-46dc-9b3e-ec027277457d",
+      "name": "SQL User",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -720,
+        360
+      ],
+      "typeVersion": 2.4,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fb8f4850-a624-4484-8e97-6a663d8b144c",
+                    "leftValue": "={{$json.user.referrer_id}}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "have referrer_id"
             },
             {
               "conditions": {
@@ -339,9 +610,9 @@
                 },
                 "conditions": [
                   {
-                    "id": "08ef8fa6-5eab-45b8-bbdc-b6d8f9dcbf70",
-                    "leftValue": "=true",
-                    "rightValue": "true",
+                    "id": "0a8dd261-9d27-4fc8-945b-99166840db1f",
+                    "leftValue": "=0",
+                    "rightValue": "0",
                     "operator": {
                       "type": "string",
                       "operation": "equals",
@@ -352,7 +623,7 @@
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "others"
+              "outputKey": "no referrer_id"
             }
           ]
         },
@@ -361,60 +632,264 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        120,
-        120
+        280,
+        220
       ],
-      "id": "b25b4880-66e8-4a25-ac1d-1752b1740b8e",
-      "name": "Switch Command"
+      "id": "456ab4a0-95b0-4f7b-801f-4ecaf1e492fb",
+      "name": "Switch1"
     },
     {
       "parameters": {
-        "options": {}
+        "jsCode": "const text = `**Внимание, вы нажали на вашу собственную реферальную ссылку**\nРеферальная ссылка работает только для создания новых аккаунтов для ваших друзей, у которых еще нет аккаунта.`;\n\n//$json.telegram.send_text=text;\nconst json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
       },
-      "id": "36a28a65-b8a3-4048-83a8-81f44e10a70b",
-      "name": "Extract message",
-      "type": "n8n-nodes-base.set",
+      "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        340,
-        -200
-      ]
+        -700,
+        40
+      ],
+      "id": "93d5ff53-f418-42a2-845a-c78050839d8b",
+      "name": "YourRef"
     },
     {
       "parameters": {
-        "functionCode": "return [{ json: $json }];"
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🏠 Главное меню",
+                    "additionalFields": {
+                      "callback_data": "start"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
       },
-      "id": "9f223774-8e9e-4c28-9c11-745f78f55323",
-      "name": "Show second $json",
-      "type": "n8n-nodes-base.function",
+      "id": "671e6a1a-29a8-4c3c-8e2b-383f34bedb2c",
+      "name": "Send YourRef",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        -500,
+        40
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "0e719cb2-eaff-4358-9785-33cb4ba9be68",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.telegram.user_id}}",
+                    "rightValue": "={{$json.args.referrer_id}}",
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "user_id==referrer_id"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0a8dd261-9d27-4fc8-945b-99166840db1f",
+                    "leftValue": "=0",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1020,
+        220
+      ],
+      "id": "18544ee9-8867-40eb-8b75-b90beec67ccb",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowId": "sJgafwuqjZcpLKvO",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1,
       "position": [
-        400,
-        940
-      ]
+        -1680,
+        -80
+      ],
+      "id": "fcc59e43-cc18-4d91-80c6-b0cd293604bb",
+      "name": "Execute config.json"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM devices WHERE user_id = $1;",
+        "options": {
+          "queryReplacement": "={{ $json.telegram.user_id }}\n   ",
+          "replaceEmptyStrings": false
+        }
+      },
+      "id": "9db84452-3bc6-4450-85bf-613b556daf2e",
+      "name": "SQL Devices",
+      "type": "n8n-nodes-base.mySql",
+      "position": [
+        -200,
+        220
+      ],
+      "typeVersion": 2.4,
+      "alwaysOutputData": true,
+      "credentials": {
+        "mySql": {
+          "id": "x219LayYyFolDwme",
+          "name": "MySQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    devices:$json,\n    //devices_count = devices.length,\n    ...$node[\"User\"].json,    \n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        20,
+        220
+      ],
+      "id": "8732df8c-eda3-4c57-a8b6-cc1159911704",
+      "name": "Devices"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 191616953,
+          "message": {
+            "message_id": 598,
+            "from": {
+              "id": 238560779,
+              "is_bot": false,
+              "first_name": "Anton Dodonov",
+              "username": "AntonDodonov",
+              "language_code": "en",
+              "is_premium": true
+            },
+            "chat": {
+              "id": 238560779,
+              "first_name": "Anton Dodonov",
+              "username": "AntonDodonov",
+              "type": "private"
+            },
+            "date": 1745401368,
+            "text": "/start 1001_test",
+            "entities": [
+              {
+                "offset": 0,
+                "length": 6,
+                "type": "bot_command"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
   "connections": {
-    "Switch Callback": {
+    "Switch Command": {
       "main": [
         [
           {
-            "node": "Execute /devices",
+            "node": "cmd_start.json",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Execute /help",
+            "node": "cmd_start.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_devices.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_devices.json",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Telegram Trigger Messages": {
+    "User": {
+      "main": [
+        [
+          {
+            "node": "SQL Devices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Referer": {
       "main": [
         [
           {
@@ -425,64 +900,188 @@
         ]
       ]
     },
-    "Switch Command": {
+    "Telegram Trigger": {
       "main": [
         [
           {
-            "node": "Execute /start",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute /devices",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute /invite",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute /help",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Execute /privacy",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Show second $json",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Switch Callback",
+            "node": "Telergam",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Show second $json": {
+    "Args": {
       "main": [
         [
           {
-            "node": "Telegram",
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telergam": {
+      "main": [
+        [
+          {
+            "node": "Execute config.json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RefererGet": {
+      "main": [
+        [
+          {
+            "node": "Referer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Prepare": {
+      "main": [
+        [
+          {
+            "node": "Send Test",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_invite.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_invite.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_help.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_help.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cmd_privacy.json",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Args",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL User": {
+      "main": [
+        [
+          {
+            "node": "User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "RefererGet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YourRef": {
+      "main": [
+        [
+          {
+            "node": "Send YourRef",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "YourRef",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SQL User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute config.json": {
+      "main": [
+        [
+          {
+            "node": "Switch Prepare",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL Devices": {
+      "main": [
+        [
+          {
+            "node": "Devices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Devices": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
             "type": "main",
             "index": 0
           }
@@ -494,11 +1093,18 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "2a92fef6-fc15-4132-af96-5aa20758ecb2",
+  "versionId": "b5fedcd2-c234-49b6-b733-85323dc905ac",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
   },
   "id": "JrBL2echFfMR1hvA",
-  "tags": []
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
 }

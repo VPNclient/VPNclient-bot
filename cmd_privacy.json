@@ -1,0 +1,113 @@
+{
+  "name": "cmd_privacy",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "\nconst text = `Мы используем только ваш Telegram ID для предоставления услуги VPN. Мы не собираем никаких личных данных. Данные о ваших устройствах хранятся безопасно и удаляются при прекращении обслуживания. Политика: никакие персональные сведения (имя, телефон и т.п.) не требуются и не сохраняются.`;\n\n//$json.telegram.send_text=text;\nconst json=$node[\"Start\"].json;\njson.telegram.send_text=text;\n\nreturn [{\n  json\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -20
+      ],
+      "id": "e2f5ed26-3697-4d89-a22e-877c866cf1c6",
+      "name": "Link"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -20
+      ],
+      "id": "7de6893e-63fd-4962-bb46-e72472c1da21",
+      "name": "Start"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.telegram.chat_id }}",
+        "text": "={{$json.telegram.send_text}}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🏠 Главное меню",
+                    "additionalFields": {
+                      "callback_data": "start"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "ea584550-5e97-4f98-ab2e-09450459fbb5",
+      "name": "Send Privacy",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        820,
+        -20
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "0e719cb2-eaff-4358-9785-33cb4ba9be68",
+      "credentials": {
+        "telegramApi": {
+          "id": "9hfs9gxsjeru7ML3",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Link": {
+      "main": [
+        [
+          {
+            "node": "Send Privacy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1ce4aaf3-f8d4-4e9b-a41d-c97d8b762b30",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56b859031753f55d9255666ae2857967070b959d969d365ded7558e71170585b"
+  },
+  "id": "C8DvVNJJfaCR7YSp",
+  "tags": [
+    {
+      "createdAt": "2025-04-15T13:59:44.589Z",
+      "updatedAt": "2025-04-15T13:59:44.589Z",
+      "id": "PAzHawzLXHrPScDu",
+      "name": "Telegram"
+    }
+  ]
+}
